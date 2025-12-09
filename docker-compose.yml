@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  # Service Backend
+  back:
+    build: ./back
+    container_name: projet-back
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./back:/app
+      - /app/node_modules # Empêche d'écraser les node_modules du conteneur par ceux de l'hôte
+    restart: unless-stopped
+
+  # Service Frontend
+  front:
+    build: ./front
+    container_name: projet-front
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+    # Le front dépend du back (optionnel, mais propre)
+    depends_on:
+      - back
+    environment:
+      # Permet de configurer l'URL de l'API dynamiquement plus tard
+      - VITE_API_URL=http://localhost:3000
