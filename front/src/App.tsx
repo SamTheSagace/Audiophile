@@ -4,8 +4,9 @@ import {
   SidebarTrigger,
   SidebarInset,
 } from "@/components/ui/sidebar";
-import { Button } from "./components/ui/button";
 import { FaBars } from "react-icons/fa";
+import PlaylistGroup from "./components/Block/playlists/PlaylistGroup";
+
 
 export default function App() {
   return (
@@ -21,14 +22,7 @@ export default function App() {
         </header>
 
         <main className="p-4">
-          Hello
-          <h1 className="text-3xl font-bold underline">Hello world!</h1>
-          <Button>Click me</Button>
-          <Button variant="secondary">Secondary</Button>
-          <Button variant="outline">Outline</Button>
-          <Button variant="ghost">Ghost</Button>
-          <Button variant="link">Link</Button>
-          <Button variant="destructive">Delete</Button>
+          <PlaylistGroup/>
         </main>
       </SidebarInset>
     </SidebarProvider>
