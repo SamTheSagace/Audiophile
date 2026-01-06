@@ -2,9 +2,9 @@ import * as React from "react"
 import { FaDeezer, FaSpotify, FaYoutube} from "react-icons/fa"
 import { SiApplemusic } from "react-icons/si"
 
-import { NavUser } from "@/components/nav-user"
-import { NavConnections } from "@/components/nav-connections"
-import { NavActions } from "@/components/nav-actions"
+import { NavUser } from "@/components/Block/sidebar/nav-user"
+import { NavConnections } from "@/components/Block/sidebar/nav-connections"
+import { NavActions } from "@/components/Block/sidebar/nav-actions"
 import {
   Sidebar,
   SidebarContent,

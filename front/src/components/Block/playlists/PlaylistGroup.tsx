@@ -1,10 +1,10 @@
 import type { Column } from "../../ui/datatable";
-import PlaylistTable from "./PlaylistTable";
+import PlaylistTable, { type Song } from "./PlaylistTable";
 
-type Song = {
+type PlaylistGroupProp = {
   title: string
-  artist: string
 }
+
 
 const playlist: Song[] = [
   { title: "Nights", artist: "Frank Ocean" },
@@ -13,7 +13,7 @@ const playlist: Song[] = [
   { title: "Myth", artist: "Beach House" },
 ]
 
-const playlists =[playlist ,playlist, playlist, playlist]
+const playlists =[playlist ,playlist, playlist, playlist,playlist, playlist, playlist,playlist, playlist, playlist,playlist, playlist, playlist,playlist, playlist, playlist]
 
 const columns: Column<Song>[] = [
   {
@@ -24,15 +24,21 @@ const columns: Column<Song>[] = [
   {
     header: "Artist",
     accessor: "artist",
-    cell: (value) => <span className="text-muted-foreground">{value}</span>,
+    cell: (value) => <span className="font-medium">{value}</span>,
   },
 ]
 
 
-export default function PlaylistGroup() {
+export default function PlaylistGroup({title}:PlaylistGroupProp) {
     return(
-        <div className="flex gap-[1rem] flex-wrap">
-          {playlists.map((e,i)=>(<PlaylistTable columns={columns} data={e} key={i}/>))} 
+        <div className="flex gap-[2rem] flex-col"> 
+          <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
+     {title}
+    </h1>
+                    
+          <div className="flex gap-[1rem] flex-wrap justify-center">
+            {playlists.map((e,i)=>(<PlaylistTable color={"red-900"} columns={columns} data={e} key={i}/>))} 
+          </div>
         </div>
     )
 }

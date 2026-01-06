@@ -10,10 +10,25 @@
     "preview": "vite preview"
   },
   "prettier": {
+    "arrowParens": "avoid",
+    "bracketSpacing": true,
+    "bracketSameLine": false,
+    "embeddedLanguageFormatting": "auto",
+    "htmlWhitespaceSensitivity": "css",
+    "insertPragma": false,
+    "jsxSingleQuote": false,
+    "printWidth": 160,
+    "proseWrap": "always",
+    "quoteProps": "as-needed",
+    "requirePragma": false,
+    "semi": true,
+    "singleQuote": true,
+    "tabWidth": 2,
     "trailingComma": "es5",
-    "tabWidth": 4,
-    "semi": false,
-    "singleQuote": true
+    "useTabs": false,
+    "vueIndentScriptAndStyle": false,
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",
