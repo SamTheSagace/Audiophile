@@ -9,7 +9,16 @@ services:
       - "3000:3000"
     volumes:
       - ./back:/app
-      - /app/node_modules # Empêche d'écraser les node_modules du conteneur par ceux de l'hôte
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USERNAME=nest_user
+      - DB_PASSWORD=nest_password
+      - DB_NAME=audiophile_db
+    depends_on:
+      - db
     restart: unless-stopped
 
   # Service Frontend
@@ -21,9 +30,34 @@ services:
     volumes:
       - ./front:/app
       - /app/node_modules
-    # Le front dépend du back (optionnel, mais propre)
     depends_on:
       - back
     environment:
-      # Permet de configurer l'URL de l'API dynamiquement plus tard
       - VITE_API_URL=http://localhost:3000
+
+  # PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: projet-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=nest_user
+      - POSTGRES_PASSWORD=nest_password
+      - POSTGRES_DB=audiophile_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # Adminer pour la gestion de la base de données
+  adminer:
+    image: adminer
+    container_name: projet-adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
