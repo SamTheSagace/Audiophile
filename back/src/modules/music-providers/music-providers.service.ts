@@ -51,4 +51,8 @@ export class MusicProvidersService {
   async addTracksToPlaylist(providerType: ProviderEnum, playlistId: string, trackIds: string[], accessToken: string) {
     return this.getProvider(providerType).addTracksToPlaylist(playlistId, trackIds, accessToken);
   }
+
+  async getOwnerId(providerType: ProviderEnum, accessToken: string): Promise<string> {
+    return this.getProvider(providerType).getOwnerId(accessToken);
+  }
 }

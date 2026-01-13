@@ -21,4 +21,5 @@ export interface MusicProviderInterface {
   getPlaylistDetails(playlistId: string, accessToken: string): Promise<NormalizedPlaylist>;
   createPlaylist(name: string, description: string, accessToken: string, providerUserId: string): Promise<string>;
   addTracksToPlaylist(playlistId: string, trackIds: string[], accessToken: string): Promise<void>;
+  getOwnerId(accessToken: string): Promise<string>;
 }

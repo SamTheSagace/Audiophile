@@ -130,6 +130,21 @@ export class SpotifyAdapter implements MusicProviderInterface {
     }
   }
 
+  async getOwnerId(accessToken: string): Promise<string> {
+    try {
+      // On appelle /me pour avoir le profil
+      const { data } = await firstValueFrom(
+        this.httpService.get('https://api.spotify.com/v1/me', { // Attention URL v1
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }),
+      );
+      return data.id;
+    } catch (error) {
+      console.error('Erreur récupération profil Spotify', error.response?.data);
+      throw error;
+    }
+  }
+
   /**
    * Helper pour récupérer les genres d'une liste d'artistes.
    * Spotify permet de récupérer jusqu'à 50 artistes d'un coup via l'endpoint /artists?ids=...

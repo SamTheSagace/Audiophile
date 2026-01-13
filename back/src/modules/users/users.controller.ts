@@ -17,11 +17,12 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ProviderEnum } from '../music-providers/interfaces/provider.enum';
+import { MusicProvidersService } from '../music-providers/music-providers.service';
 
 // 👇 PRÉFIXE GLOBAL : Toutes les routes ici commenceront par "/users"
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService, private readonly musicProvidersService: MusicProvidersService) {}
 
   // 👇 POST /users
   // Action : CRÉER (Inscription). On reçoit les données (email, pass...) dans le Body (JSON).
@@ -67,14 +68,15 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'))
   async connectProvider(
     @Param('provider', new ParseEnumPipe(ProviderEnum)) provider: ProviderEnum,
-    @Body() body: { accessToken: string; refreshToken?: string; providerUserId: string; expiresIn?: number },
+    @Body() body: { accessToken: string; refreshToken?: string; expiresIn?: number },
     @Req() req,
   ) {
+    const providerUserId = await this.musicProvidersService.getOwnerId(provider, body.accessToken);
     return this.usersService.saveProviderConnection(
       req.user.userId,
       provider,
       body.accessToken,
-      body.providerUserId,
+      providerUserId,
       body.refreshToken,
       body.expiresIn
     );
