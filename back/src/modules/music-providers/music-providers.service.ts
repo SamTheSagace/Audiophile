@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { MusicProviderInterface, NormalizedPlaylist } from './interfaces/music-provider.interface';
 import { ProviderEnum } from './interfaces/provider.enum';
-import { SpotifyAdapter } from './adapters/spotify.adapter';
+import { SpotifyAdapter } from './adapters/spotify/spotify.adapter';
 
 /**
  * Service pour les providers de musique.

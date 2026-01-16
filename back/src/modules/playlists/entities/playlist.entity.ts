@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { ProviderEnum } from '../../music-providers/interfaces/provider.enum';
+import type { CategorizedPlaylist } from '../interfaces/categorized-playlist.interface';
 
 @Entity('playlists')
 export class Playlist {
@@ -21,7 +22,7 @@ export class Playlist {
   provider: ProviderEnum;
 
   @Column({ type: 'jsonb', nullable: true })
-  categorizedResult: any; 
+  categorizedResult: CategorizedPlaylist; 
 
   @ManyToOne(() => User, (user) => user.playlists, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })

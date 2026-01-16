@@ -1,15 +1,10 @@
-// src/modules/playlists/playlist-analyzer.service.ts
 import { Injectable } from '@nestjs/common';
-import { NormalizedPlaylist, NormalizedTrack } from '../music-providers/interfaces/music-provider.interface';
-
-export interface CategorizedPlaylist {
-  originalName: string;
-  stats: Record<string, number>;
-  categories: Record<string, NormalizedTrack[]>;
-}
+import { NormalizedPlaylist } from '../music-providers/interfaces/music-provider.interface';
+import { CategorizedPlaylist, TrackItem } from './interfaces/categorized-playlist.interface';
 
 @Injectable()
 export class PlaylistCategorizerService {
+  
   private readonly GENRE_FAMILIES_MAPPING: Record<string, string[]> = {
     'Rock & Metal': ['rock', 'metal', 'punk', 'grunge', 'indie', 'alternative'],
     'Hip-Hop & Rap': ['rap', 'hip hop', 'trap', 'drill', 'urban'],
@@ -18,45 +13,44 @@ export class PlaylistCategorizerService {
     'Classique & Jazz': ['classic', 'jazz', 'blues', 'piano', 'orchestra'],
   };
 
-   //Analyse une playlist normalisée et renvoie une version triée et catégorisée.
-  public classifyByGenreFamilies(playlist: NormalizedPlaylist): CategorizedPlaylist {
-    const result: CategorizedPlaylist = {
-      originalName: playlist.name,
-      stats: {},
-      categories: { 'Autre': [] },
-    };
+  classifyByGenreFamilies(playlist: NormalizedPlaylist): CategorizedPlaylist {
+    const results: CategorizedPlaylist = {};
 
-    // Init des catégories
-    Object.keys(this.GENRE_FAMILIES_MAPPING).forEach(key => result.categories[key] = []);
+    playlist.tracks.forEach((track) => {
+      // 1. On sécurise le genre (si undefined -> chaine vide)
+      const safeGenre = track.genre || '';
+      
+      const family = this.getFamilyForGenre(safeGenre);
 
-    // Le tri
-    for (const track of playlist.tracks) {
-      const family = this.detectGenreFamily(track.genre);
-      result.categories[family].push(track);
-    }
-
-    // Le calcul de stats
-    Object.keys(result.categories).forEach(category => {
-      const count = result.categories[category].length;
-      if (count > 0) {
-        result.stats[category] = count;
-      } else {
-        delete result.categories[category];
+      if (!results[family]) {
+        results[family] = [];
       }
+
+      // 2. On crée l'objet propre
+      const trackItem: TrackItem = {
+        id: track.id,
+        title: track.title, 
+        artist: track.artist,
+        album: track.album,
+        duration: track.duration,
+        genre: track.genre || 'Unknown', 
+      };
+
+      results[family].push(trackItem);
     });
 
-    return result;
+    return results;
   }
 
-  private detectGenreFamily(subGenre: string | undefined): string {
-    if (!subGenre) return 'Autre';
-    const lowerGenre = subGenre.toLowerCase();
+  private getFamilyForGenre(genre: string): string {
+    const lowerGenre = genre.toLowerCase();
 
     for (const [family, keywords] of Object.entries(this.GENRE_FAMILIES_MAPPING)) {
-      if (keywords.some(keyword => lowerGenre.includes(keyword))) {
+      if (keywords.some((keyword) => lowerGenre.includes(keyword))) {
         return family;
       }
     }
-    return 'Autre';
+
+    return 'Autres';
   }
 }
