@@ -8,15 +8,10 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./back:/app
-      - /app/node_modules
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USERNAME=nest_user
-      - DB_PASSWORD=nest_password
-      - DB_NAME=audiophile_db
+      - ./back/src:/app/src
+      - ./back/test:/app/test
+    env_file:
+      - .env
     depends_on:
       - db
     restart: unless-stopped
@@ -28,12 +23,12 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - ./front:/app
-      - /app/node_modules
+      - ./front/public:/app/public
+      - ./front/src:/app/src
     depends_on:
       - back
-    environment:
-      - VITE_API_URL=http://localhost:3000
+    env_file:
+      - .env
 
   # PostgreSQL
   db:
@@ -41,10 +36,12 @@ services:
     container_name: projet-db
     ports:
       - "5432:5432"
+    env_file:
+      - .env
     environment:
-      - POSTGRES_USER=nest_user
-      - POSTGRES_PASSWORD=nest_password
-      - POSTGRES_DB=audiophile_db
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
@@ -58,6 +55,8 @@ services:
       - "8080:8080"
     depends_on:
       - db
+    env_file:
+      - .env
 
 volumes:
   postgres_data:
