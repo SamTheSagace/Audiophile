@@ -30,7 +30,6 @@ export default function PlaylistIcone({ title, icone, provider }: DataTableProps
         <CardAction className="w-full">
           <ButtonGroup className="w-full">
             <ConfirmationDialog onClick={handleFilter} />
-            {/* <Button variant="outline" className="flex-1 bg-white/0 "> Filter</Button> */}
             <ExportModal onClick={handleFilter} />
           </ButtonGroup>
         </CardAction>

@@ -1,7 +1,8 @@
-import { Button } from '@/components/ui/button';
 import { DataTable, type Column } from '../../ui/datatable';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { BORDER_MAP, type Provider } from '@/lib/utils';
+import { ConfirmationDialog } from '../modals/Confirmation';
+import { ExportModal } from '../modals/ExportModal';
 
 type DataTableProps = {
   data: Song[];
@@ -26,16 +27,15 @@ const columns: Column<Song>[] = [
 ];
 
 export default function PlaylistTable({ data, provider }: DataTableProps) {
+  const handleFilter = () => {
+    console.log('filter !');
+  };
   return (
-    <div className={`rounded-md border max-w-fit ${BORDER_MAP[provider]} flex flex-col justify-between `}>
+    <div className={`rounded-md border max-w-fit ${BORDER_MAP[provider]} flex flex-col justify-between h-full`}>
       <DataTable columns={columns} data={data} />
       <ButtonGroup className="w-full">
-        <Button variant="outline" className="flex-1 bg-white/0">
-          Filter
-        </Button>
-        <Button variant="outline" className="flex-1 bg-white/0 ">
-          Export
-        </Button>
+        <ConfirmationDialog onClick={handleFilter} />
+        <ExportModal onClick={handleFilter} />
       </ButtonGroup>
     </div>
   );
