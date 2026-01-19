@@ -1,25 +1,41 @@
-import { Button } from "@/components/ui/button";
-import { DataTable, type Column } from "../../ui/datatable"
-import { ButtonGroup } from "@/components/ui/button-group";
+import { Button } from '@/components/ui/button';
+import { DataTable, type Column } from '../../ui/datatable';
+import { ButtonGroup } from '@/components/ui/button-group';
 
-type DataTableProps<T> = {
-  columns: Column<T>[]
-  data: T[]
-  color:string
-}
+type DataTableProps = {
+  data: Song[];
+  color: string;
+};
 export type Song = {
-  title: string
-  artist: string
-}
+  title: string;
+  artist: string;
+};
 
-export default function PlaylistTable<Song>({columns, data, color}:DataTableProps<Song>,) {
+const columns: Column<Song>[] = [
+  {
+    header: 'Title',
+    accessor: 'title',
+    cell: value => <span className="font-medium">{value}</span>,
+  },
+  {
+    header: 'Artist',
+    accessor: 'artist',
+    cell: value => <span className="font-medium">{value}</span>,
+  },
+];
+
+export default function PlaylistTable({ data, color }: DataTableProps) {
   return (
-    <div className={`rounded-md border max-w-fit bg-${color}`}>
-        <DataTable columns={columns} data={data} />
-        <ButtonGroup className="w-full">
-          <Button variant="outline" className="flex-1 bg-white/0 text-white"> Filter</Button>
-          <Button variant="outline" className="flex-1 bg-white/0 text-white"> Export</Button>
-        </ButtonGroup>
+    <div className={`rounded-md border max-w-fit `}>
+      <DataTable columns={columns} data={data} />
+      <ButtonGroup className="w-full">
+        <Button variant="outline" className="flex-1 bg-white/0 ">
+          Filter
+        </Button>
+        <Button variant="outline" className="flex-1 bg-white/0 ">
+          Export
+        </Button>
+      </ButtonGroup>
     </div>
   );
 }

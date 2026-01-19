@@ -1,10 +1,6 @@
-import { LogOut, UserPlus } from "lucide-react"
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { Separator } from "@/components/ui/separator"
+import { LogOut, UserPlus } from 'lucide-react';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+import { Separator } from '@/components/ui/separator';
 
 export function NavActions() {
   return (
@@ -35,5 +31,5 @@ export function NavActions() {
         </SidebarMenuItem>
       </SidebarMenu>
     </div>
-  )
+  );
 }
