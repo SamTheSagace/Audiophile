@@ -1,10 +1,8 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
-
-interface LoginDto {
-  email: string;
-  password: string;
-}
+import { LoginDto } from './dto/login.dto';
+import { AuthGuard } from '@nestjs/passport';
+import type { AuthenticatedRequest } from '../../common/interfaces/authenticated-request.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -13,5 +11,11 @@ export class AuthController {
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto.email, loginDto.password);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('me')
+  getMe(@Req() req: AuthenticatedRequest) {
+    return req.user;
   }
 }

@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
+import auth from '@/lib/auth';
 
 export function NavUser({
   user,
@@ -22,6 +23,15 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+
+  const handleLogout = () => {
+    auth.logout();
+    window.location.reload();
+  };
+
+  if (!user) {
+    return <div className="p-2">Pas connecté</div>;
+  }
 
   return (
     <SidebarMenu>
@@ -83,7 +93,9 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <LogOut />
-              Log out
+              <button onClick={handleLogout} className="text-sm text-red-500">
+                Se déconnecter
+              </button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
