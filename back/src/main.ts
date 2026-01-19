@@ -5,12 +5,13 @@ import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true, // Nettoie les champs non déclarés
-    transform: true, // Convertit les types automatiquement
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      //whitelist: true, // Nettoie les champs non déclarés
+      transform: true, // Convertit les types automatiquement
+    }),
+  );
 
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
-
