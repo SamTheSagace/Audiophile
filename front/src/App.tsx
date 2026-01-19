@@ -5,6 +5,7 @@ import { ButtonGroup } from './components/ui/button-group';
 import { Button } from './components/ui/button';
 import { useState } from 'react';
 import PlaylistIconGroup from './components/Block/playlists/PlaylistIconGroup';
+import PlaylistPage from './components/pages/PlaylistPage';
 
 export default function App() {
   const [playlistSide, setPlaylistSide] = useState(1);
@@ -21,17 +22,26 @@ export default function App() {
         </header>
 
         <main className="p-4">
-          <div>
+          <PlaylistPage id={'1'} />
+          {/* <div>
             <ButtonGroup>
-              <Button variant={'default'} onClick={() => setPlaylistSide(1)} className={playlistSide == 1 ? 'bg-black text-white' : 'bg-white text-black'}>
+              <Button
+                variant={'default'}
+                onClick={() => setPlaylistSide(1)}
+                className={playlistSide == 1 ? 'bg-black text-white' : 'bg-white text-black hover:text-white'}
+              >
                 Imported Playlists
               </Button>
-              <Button variant={'default'} onClick={() => setPlaylistSide(2)} className={playlistSide == 2 ? 'bg-black text-white' : 'bg-white text-black'}>
+              <Button
+                variant={'default'}
+                onClick={() => setPlaylistSide(2)}
+                className={playlistSide == 2 ? 'bg-black text-white' : 'bg-white text-black hover:text-white'}
+              >
                 filtered Playlists
               </Button>
             </ButtonGroup>
           </div>
-          {playlistSide == 1 ? <PlaylistIconGroup title="Imported Playlists : " /> : <PlaylistIconGroup title="Filtered Playlists : " />}
+          {playlistSide == 1 ? <PlaylistIconGroup title="Imported Playlists : " /> : <PlaylistIconGroup title="Filtered Playlists : " />} */}
         </main>
       </SidebarInset>
     </SidebarProvider>

@@ -50,7 +50,7 @@ export default function PlaylistGroup({ title }: PlaylistGroupProp) {
 
       <div className="flex gap-[1rem] flex-wrap justify-between">
         {playlists.map((e, i) => (
-          <PlaylistTable color={'red-900'} data={e.song} key={i} />
+          <PlaylistTable provider={'youtube'} data={e.song} key={i} />
         ))}
       </div>
     </div>
