@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import { LoginForm } from './components/login';
-import RegisterForm from './components/register';
 import auth from './lib/auth';
 import { AppSidebar } from '@/components/Block/sidebar/app-sidebar';
 import { SidebarProvider, SidebarTrigger, SidebarInset } from '@/components/ui/sidebar';
@@ -9,6 +7,8 @@ import { ButtonGroup } from './components/ui/button-group';
 import { Button } from './components/ui/button';
 import PlaylistIconGroup from './components/Block/playlists/PlaylistIconGroup';
 import PlaylistPage from './components/pages/PlaylistPage';
+import { LoginForm } from './components/pages/login';
+import RegisterForm from './components/pages/register';
 
 export default function App() {
   const [playlistSide, setPlaylistSide] = useState(1);
