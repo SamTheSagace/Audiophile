@@ -34,12 +34,12 @@ export function NavUser({
 }>) {
   const { isMobile } = useSidebar()
 
-  const handleLogout = () => { auth.logout(); window.location.reload(); }
+  const handleLogout = () => { auth.logout(); globalThis.location.reload(); }
 
   if (!user) {
     return <div className="p-2">Pas connecté</div>
   }
-  
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>

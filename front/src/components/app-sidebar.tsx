@@ -1,5 +1,5 @@
 import * as React from "react"
-import { FaDeezer, FaSpotify, FaYoutube} from "react-icons/fa"
+import { FaDeezer, FaSpotify, FaYoutube, FaSoundcloud, FaAmazon} from "react-icons/fa"
 import { SiApplemusic } from "react-icons/si"
 import { MusicProvider } from "@/types/provider"
 import { NavUser } from "@/components/nav-user"
@@ -21,8 +21,8 @@ import {
       { name: "Spotify", url: "/provider/spotify", icon: FaSpotify, enum: MusicProvider.SPOTIFY },
       { name: "YouTube", url: "/provider/youtube", icon: FaYoutube, enum: MusicProvider.YOUTUBE },
       { name: "Deezer", url: "/provider/deezer", icon: FaDeezer, enum: MusicProvider.DEEZER },
-      { name: "SoundCloud", url: "/provider/soundcloud", icon: FaDeezer, enum: MusicProvider.SOUNDCLOUD },
-      { name: "Amazon Music", url: "/provider/amazon_music", icon: FaDeezer, enum: MusicProvider.AMAZON_MUSIC },
+      { name: "SoundCloud", url: "/provider/soundcloud", icon: FaSoundcloud, enum: MusicProvider.SOUNDCLOUD },
+      { name: "Amazon Music", url: "/provider/amazon_music", icon: FaAmazon, enum: MusicProvider.AMAZON_MUSIC },
     ]
  
 
