@@ -9,6 +9,7 @@ const Register = React.lazy(() => import('./pages/Register'))
 const Dashboard = React.lazy(() => import('./pages/Dashboard'))
 const Profile = React.lazy(() => import('./pages/Profile'))
 const Playlists = React.lazy(() => import('./pages/Playlists'))
+const Provider = React.lazy(() => import('./pages/Provider'))
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
               <Route path="/dashboard" element={<AppLayout><Dashboard /></AppLayout>} />
               <Route path="/profile" element={<AppLayout><Profile /></AppLayout>} />
               <Route path="/playlists" element={<AppLayout><Playlists /></AppLayout>} />
+              <Route path="/provider/:provider" element={<AppLayout><Provider /></AppLayout>} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />

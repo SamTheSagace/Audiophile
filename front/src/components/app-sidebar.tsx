@@ -17,12 +17,12 @@ import {
 } from "@/components/ui/sidebar"
 
   const providerList = [
-      { name: "Apple Music", url: "#", icon: SiApplemusic, enum: MusicProvider.APPLE_MUSIC },
-      { name: "Spotify", url: "#", icon: FaSpotify, enum: MusicProvider.SPOTIFY },
-      { name: "YouTube", url: "#", icon: FaYoutube, enum: MusicProvider.YOUTUBE },
-      { name: "Deezer", url: "#", icon: FaDeezer, enum: MusicProvider.DEEZER },
-      { name: "SoundCloud", url: "#", icon: FaDeezer, enum: MusicProvider.SOUNDCLOUD },
-      { name: "Amazon Music", url: "#", icon: FaDeezer, enum: MusicProvider.AMAZON_MUSIC },
+      { name: "Apple Music", url: "/provider/apple_music", icon: SiApplemusic, enum: MusicProvider.APPLE_MUSIC },
+      { name: "Spotify", url: "/provider/spotify", icon: FaSpotify, enum: MusicProvider.SPOTIFY },
+      { name: "YouTube", url: "/provider/youtube", icon: FaYoutube, enum: MusicProvider.YOUTUBE },
+      { name: "Deezer", url: "/provider/deezer", icon: FaDeezer, enum: MusicProvider.DEEZER },
+      { name: "SoundCloud", url: "/provider/soundcloud", icon: FaDeezer, enum: MusicProvider.SOUNDCLOUD },
+      { name: "Amazon Music", url: "/provider/amazon_music", icon: FaDeezer, enum: MusicProvider.AMAZON_MUSIC },
     ]
  
 
