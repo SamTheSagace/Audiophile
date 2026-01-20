@@ -1,76 +1,36 @@
-import React, { useEffect, useState } from 'react'
-import { AppSidebar } from '@/components/app-sidebar'
-import {
-    SidebarProvider,
-    SidebarTrigger,
-    SidebarInset,
-} from '@/components/ui/sidebar'
-import { Button } from './components/ui/button'
-import { FaBars } from 'react-icons/fa'
-import { LoginForm } from './components/login'
-import RegisterForm from './components/register'
-import auth from './lib/auth'
+import React, { Suspense } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider } from '@/hooks/useAuth'
+import AppLayout from '@/layouts/AppLayout'
+
+const Home = React.lazy(() => import('./pages/Home'))
+const Login = React.lazy(() => import('./pages/Login'))
+const Register = React.lazy(() => import('./pages/Register'))
+const Dashboard = React.lazy(() => import('./pages/Dashboard'))
+const Profile = React.lazy(() => import('./pages/Profile'))
+const Playlists = React.lazy(() => import('./pages/Playlists'))
+import { ProtectedRoute } from '@/components/ProtectedRoute'
 
 export default function App() {
-    const [loading, setLoading] = useState(true)
-    const [user, setUser] = useState<any | null>(null)
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Suspense fallback={<div className="p-6">Loading...</div>}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-    const refreshUser = async () => {
-        try {
-            const u = await auth.getMe()
-            setUser(u)
-        } catch {
-            setUser(null)
-        } finally {
-            setLoading(false)
-        }
-    }
+            <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<AppLayout><Dashboard /></AppLayout>} />
+              <Route path="/profile" element={<AppLayout><Profile /></AppLayout>} />
+              <Route path="/playlists" element={<AppLayout><Playlists /></AppLayout>} />
+            </Route>
 
-    useEffect(() => {
-        refreshUser()
-    }, [])
-
-    const [mode, setMode] = useState<'login'|'register'>('login')
-
-    if (loading) return <div className="p-6">Chargement...</div>
-
-    if (!user) {
-        return (
-            <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
-                <div className="w-full max-w-sm md:max-w-4xl">
-                    {mode === 'login' ? (
-                        <LoginForm onLogin={refreshUser} onSwitchToRegister={() => setMode('register')} />
-                    ) : (
-                        <RegisterForm onRegister={() => setMode('login')} onSwitchToLogin={() => setMode('login')} />
-                    )}
-                </div>
-            </div>
-        )
-    }
-
-    return (
-        <SidebarProvider>
-            <AppSidebar />
-
-            <SidebarInset>
-                <header className="flex h-14 items-center gap-2 border-b px-4">
-                    <SidebarTrigger className="-ml-1">
-                        <FaBars className="h-4 w-4" />
-                    </SidebarTrigger>
-                    <div className="font-semibold">Audiophile</div>
-                </header>
-
-                <main className="p-4">
-                    Hello
-                    <h1 className="text-3xl font-bold underline">Hello world!</h1>
-                    <Button>Click me</Button>
-                    <Button variant="secondary">Secondary</Button>
-                    <Button variant="outline">Outline</Button>
-                    <Button variant="ghost">Ghost</Button>
-                    <Button variant="link">Link</Button>
-                    <Button variant="destructive">Delete</Button>
-                </main>
-            </SidebarInset>
-        </SidebarProvider>
-    )
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
+      </BrowserRouter>
+    </AuthProvider>
+  )
 }
