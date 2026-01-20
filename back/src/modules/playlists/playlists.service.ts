@@ -64,8 +64,9 @@ export class PlaylistsService {
       accessToken,
     );
 
-    const result = this.playlistCategorizer.classifyByGenreFamilies(rawPlaylist);
-    
+    const result =
+      this.playlistCategorizer.classifyByGenreFamilies(rawPlaylist);
+
     await this.savePlaylistState(user, rawPlaylist, result);
     return result;
   }
@@ -90,7 +91,7 @@ export class PlaylistsService {
       where: { originalId: sourcePlaylistId, userId: userId },
     });
 
-    if (!playlistEntity || !playlistEntity.categorizedResult) {
+    if (!playlistEntity?.categorizedResult) {
       throw new NotFoundException(
         `La playlist ${sourcePlaylistId} n'a pas encore été triée en base.`,
       );
@@ -118,8 +119,7 @@ export class PlaylistsService {
       );
 
       result[categoryName] = updatedTracks;
-      
-      playlistEntity.categorizedResult = result; 
+      playlistEntity.categorizedResult = result;
 
       await this.playlistRepository.save(playlistEntity);
       finalTrackIds = trackIds;
@@ -131,9 +131,7 @@ export class PlaylistsService {
     }
 
     // 4. Export vers le Provider
-    const newPlaylistName = customName
-      ? customName
-      : `Audiophile - ${categoryName}`;
+    const newPlaylistName = customName || `Audiophile - ${categoryName}`;
     const description = `Généré automatiquement par Audiophile.`;
 
     const newPlaylistId = await this.musicProvidersService.createPlaylist(
@@ -165,16 +163,22 @@ export class PlaylistsService {
     };
   }
 
-  private async getAccessTokenOrThrow(userId: string, provider: ProviderEnum): Promise<string> {
-      const account = await this.accountRepository.findOneBy({ userId, provider });
-      if (!account || !account.accessToken) throw new UnauthorizedException('Non connecté');
-      return account.accessToken;
+  private async getAccessTokenOrThrow(
+    userId: string,
+    provider: ProviderEnum,
+  ): Promise<string> {
+    const account = await this.accountRepository.findOneBy({
+      userId,
+      provider,
+    });
+    if (!account?.accessToken) throw new UnauthorizedException('Non connecté');
+    return account.accessToken;
   }
 
   private async getUserOrThrow(userId: string): Promise<User> {
-      const user = await this.userRepository.findOneBy({ id: userId });
-      if (!user) throw new NotFoundException('User introuvable');
-      return user;
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) throw new NotFoundException('User introuvable');
+    return user;
   }
 
   private async savePlaylistState(
@@ -186,17 +190,13 @@ export class PlaylistsService {
       originalId: rawPlaylist.id,
       userId: user.id,
     });
-    if (!entity) {
-      entity = this.playlistRepository.create({
-        originalId: rawPlaylist.id,
-        name: rawPlaylist.name,
-        provider: rawPlaylist.provider,
-        user: user,
-      });
-    }
-    
+    entity ??= this.playlistRepository.create({
+      originalId: rawPlaylist.id,
+      name: rawPlaylist.name,
+      provider: rawPlaylist.provider,
+      user: user,
+    });
     entity.categorizedResult = result;
-    
     await this.playlistRepository.save(entity);
   }
 }

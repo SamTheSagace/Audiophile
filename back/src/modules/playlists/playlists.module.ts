@@ -9,7 +9,10 @@ import { User } from '../users/entities/user.entity';
 import { ConnectedAccount } from '../users/entities/connected-account.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Playlist, User, ConnectedAccount]), MusicProvidersModule],
+  imports: [
+    TypeOrmModule.forFeature([Playlist, User, ConnectedAccount]),
+    MusicProvidersModule,
+  ],
   controllers: [PlaylistsController],
   providers: [PlaylistsService, PlaylistCategorizerService],
 })
