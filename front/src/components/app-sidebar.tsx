@@ -5,7 +5,7 @@ import { SiApplemusic } from "react-icons/si"
 import { NavUser } from "@/components/nav-user"
 import { NavConnections } from "@/components/nav-connections"
 import { NavActions } from "@/components/nav-actions"
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 import auth from '../lib/auth'
 import {
   Sidebar,
@@ -45,10 +45,14 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
       <SidebarContent>
-        <NavConnections
-          connectTo={data.connectTo}
-          alreadyConnected={data.alreadyConnected}
-        />
+        <div className="px-3">
+          <div className="mt-6">
+            <NavConnections
+              connectTo={data.connectTo}
+              alreadyConnected={data.alreadyConnected}
+            />
+          </div>
+        </div>
       </SidebarContent>
 
       <SidebarRail />

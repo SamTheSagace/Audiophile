@@ -1,4 +1,5 @@
-import { LogOut, UserPlus } from "lucide-react"
+import { LogOut } from "lucide-react"
+import auth, { logout } from "@/lib/auth"
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -7,29 +8,20 @@ import {
 import { Separator } from "@/components/ui/separator"
 
 export function NavActions() {
+
+    const handleLogout = () => { auth.logout(); window.location.reload(); }
+  
   return (
     <div className="space-y-2">
-      <Separator />
-
-      <SidebarMenu>
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild className="py-5">
-            <a href="#" className="flex w-full items-center gap-3">
-              <UserPlus className="size-4" />
-              <span>Invite Friends</span>
-            </a>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      </SidebarMenu>
 
       <Separator />
 
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton asChild className="py-5">
-            <a href="#" className="flex items-center gap-3">
+            <a href="#" className="flex items-center gap-3" onClick={handleLogout}>
               <LogOut className="size-4" />
-              <span>Sign Out</span>
+              <span>Se déconnecter</span>
             </a>
           </SidebarMenuButton>
         </SidebarMenuItem>
