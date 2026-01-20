@@ -1,11 +1,5 @@
-import type { IconType } from "react-icons";
-import {
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
+import type { IconType } from 'react-icons';
+import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 
 type Item = {
   name: string;
@@ -13,21 +7,13 @@ type Item = {
   icon: IconType;
 };
 
-export function NavConnections({
-  connectTo,
-  alreadyConnected,
-}: {
-  connectTo: Item[];
-  alreadyConnected: Item[];
-}) {
+export function NavConnections({ connectTo, alreadyConnected }: { connectTo: Item[]; alreadyConnected: Item[] }) {
   return (
     <div className="space-y-2">
       <SidebarGroup>
-        <SidebarGroupLabel className="text-xs tracking-widest text-muted-foreground">
-          ALREADY CONNECTED
-        </SidebarGroupLabel>
+        <SidebarGroupLabel className="text-xs tracking-widest text-muted-foreground">ALREADY CONNECTED</SidebarGroupLabel>
         <SidebarMenu>
-          {alreadyConnected.map((item) => (
+          {alreadyConnected.map(item => (
             <SidebarMenuItem key={item.name}>
               <SidebarMenuButton asChild className="py-5">
                 <a href={item.url} className="flex items-center gap-3">
@@ -43,11 +29,9 @@ export function NavConnections({
       </SidebarGroup>
 
       <SidebarGroup>
-        <SidebarGroupLabel className="text-xs tracking-widest text-muted-foreground">
-          CONNECT TO
-        </SidebarGroupLabel>
+        <SidebarGroupLabel className="text-xs tracking-widest text-muted-foreground">CONNECT TO</SidebarGroupLabel>
         <SidebarMenu>
-          {connectTo.map((item) => (
+          {connectTo.map(item => (
             <SidebarMenuItem key={item.name}>
               <SidebarMenuButton asChild className="py-5">
                 <a href={item.url} className="flex items-center gap-3">
