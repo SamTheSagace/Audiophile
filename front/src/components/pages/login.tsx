@@ -8,7 +8,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import auth from '../lib/auth'
+import auth from "@/lib/auth"
 import { useAuth } from '@/hooks/useAuth'
 
 export function LoginForm({

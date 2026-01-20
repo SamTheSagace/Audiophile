@@ -1,8 +1,8 @@
 import React from 'react'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
-import { AppSidebar } from '@/components/app-sidebar'
+import { AppSidebar } from '@/components/Block/sidebar/app-sidebar'
 
-export const AppLayout: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
+export const AppLayout: React.FC<React.PropsWithChildren<object>> = ({ children }) => {
   return (
     <SidebarProvider>
       <AppSidebar />

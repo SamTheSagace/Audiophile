@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import RegisterForm from '@/components/register'
+import RegisterForm from '@/components/pages/register'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function RegisterPage() {
