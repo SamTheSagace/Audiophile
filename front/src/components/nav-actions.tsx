@@ -1,5 +1,5 @@
 import { LogOut } from "lucide-react"
-import auth, { logout } from "@/lib/auth"
+import auth from "@/lib/auth"
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator"
 
 export function NavActions() {
 
-    const handleLogout = () => { auth.logout(); window.location.reload(); }
+    const handleLogout = () => { auth.logout(); globalThis.location.reload(); }
   
   return (
     <div className="space-y-2">
@@ -19,10 +19,10 @@ export function NavActions() {
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton asChild className="py-5">
-            <a href="#" className="flex items-center gap-3" onClick={handleLogout}>
+            <button className="flex items-center gap-3 hover:cursor-pointer" onClick={handleLogout}>
               <LogOut className="size-4" />
               <span>Se déconnecter</span>
-            </a>
+            </button>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

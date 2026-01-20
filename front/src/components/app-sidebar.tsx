@@ -1,12 +1,13 @@
 import * as React from "react"
 import { FaDeezer, FaSpotify, FaYoutube} from "react-icons/fa"
 import { SiApplemusic } from "react-icons/si"
-
+import { MusicProvider } from "@/types/provider"
 import { NavUser } from "@/components/nav-user"
 import { NavConnections } from "@/components/nav-connections"
 import { NavActions } from "@/components/nav-actions"
 import { useEffect, useState } from 'react';
 import auth from '../lib/auth'
+import { type PublicUser } from '@/types/user'
 import {
   Sidebar,
   SidebarContent,
@@ -15,41 +16,43 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-  const data = {
-    connectTo: [
-      { name: "Apple Music", url: "#", icon: SiApplemusic },
-      { name: "Spotify", url: "#", icon: FaSpotify },
-      { name: "YouTube", url: "#", icon: FaYoutube },
-    ],
-    alreadyConnected: [
-      { name: "Deezer", url: "#", icon: FaDeezer },
-    ],
-  }
+  const providerList = [
+      { name: "Apple Music", url: "#", icon: SiApplemusic, enum: MusicProvider.APPLE_MUSIC },
+      { name: "Spotify", url: "#", icon: FaSpotify, enum: MusicProvider.SPOTIFY },
+      { name: "YouTube", url: "#", icon: FaYoutube, enum: MusicProvider.YOUTUBE },
+      { name: "Deezer", url: "#", icon: FaDeezer, enum: MusicProvider.DEEZER },
+      { name: "SoundCloud", url: "#", icon: FaDeezer, enum: MusicProvider.SOUNDCLOUD },
+      { name: "Amazon Music", url: "#", icon: FaDeezer, enum: MusicProvider.AMAZON_MUSIC },
+    ]
  
 
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
-  const [user, setUser] = useState<{ email?: string; userId?: string; display_name?: string } | null>(null)
+  const [user, setUser] = useState<PublicUser | null>(null)
 
   useEffect(() => {
     let mounted = true
     auth.getMe()
-      .then((u) => { if (mounted) setUser(u as any) })
+      .then((u : PublicUser) => { if (mounted) setUser(u) })
       .catch(() => { if (mounted) setUser(null) })
     return () => { mounted = false }
   }, [])
 
+  const alreadyConnected = user?.connectedAccounts?.map(acc => acc.provider) || []
+
+  const connectTo = providerList.filter(p => !alreadyConnected.includes(p.enum))
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
-        <NavUser user={user ? { name: user.display_name || user.email, email: user.email, avatar: '/avatars/shadcn.jpg' } : undefined} />
+        <NavUser user={user ? { ...user, avatar: user.avatar || '/avatars/shadcn.jpg' } : undefined} />
       </SidebarHeader>
 
       <SidebarContent>
         <div className="px-3">
           <div className="mt-6">
             <NavConnections
-              connectTo={data.connectTo}
-              alreadyConnected={data.alreadyConnected}
+              connectTo={connectTo}
+              alreadyConnected={alreadyConnected}
             />
           </div>
         </div>

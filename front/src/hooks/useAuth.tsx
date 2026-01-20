@@ -1,10 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import auth from '../lib/auth'
-
-type User = any | null
+import type { User } from '@/types/user'
 
 type AuthContextValue = {
-  user: User
+  user: User | null
   loading: boolean
   refresh: () => Promise<void>
   login: (email: string, password: string) => Promise<void>
@@ -14,14 +13,14 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
 export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
-  const [user, setUser] = useState<User>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
   const refresh = async () => {
     setLoading(true)
     try {
       const u = await auth.getMe()
-      setUser(u as any)
+      setUser(u as User)
     } catch {
       setUser(null)
     } finally {

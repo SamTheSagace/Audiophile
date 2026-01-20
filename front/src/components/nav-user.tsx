@@ -25,16 +25,13 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import auth from "@/lib/auth"
+import type { PublicUser } from "@/types/user"
 
 export function NavUser({
   user,
-}: {
-  user: {
-    name: string
-    email: string
-    avatar: string
-  }
-}) {
+}: Readonly<{
+  user: PublicUser | undefined
+}>) {
   const { isMobile } = useSidebar()
 
   const handleLogout = () => { auth.logout(); window.location.reload(); }
@@ -42,7 +39,7 @@ export function NavUser({
   if (!user) {
     return <div className="p-2">Pas connecté</div>
   }
-
+  
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -53,11 +50,11 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">{user.name.charAt(0)}</AvatarFallback>
+                <AvatarImage src={user.avatar} alt={user.displayName} />
+                <AvatarFallback className="rounded-lg">{user.displayName.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate font-medium">{user.displayName}</span>
                 <span className="truncate text-xs">{user.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
@@ -72,11 +69,11 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">{user.name.charAt(0)}</AvatarFallback>
+                  <AvatarImage src={user.avatar} alt={user.displayName} />
+                  <AvatarFallback className="rounded-lg">{user.displayName.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
+                  <span className="truncate font-medium">{user.displayName}</span>
                   <span className="truncate text-xs">{user.email}</span>
                 </div>
               </div>
