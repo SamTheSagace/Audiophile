@@ -1,3 +1,5 @@
+import { MOCK_PLAYLISTS_LIST } from '@/data/mock-playlists';
+import type { NormalizedPlaylist } from '@/types/playlist.types';
 import { clsx, type ClassValue } from 'clsx';
 import React from 'react';
 import type { IconType } from 'react-icons';
@@ -28,6 +30,27 @@ type ProviderIconProps = {
 
 export const ProviderIcon: React.FC<ProviderIconProps> = ({ provider, ...props }) => {
   const Icon = ICON_MAP[provider];
-  // Use createElement to avoid JSX restrictions
   return React.createElement(Icon, props);
+};
+
+export const formatDuration = (seconds: number): string => {
+  if (!seconds) return "0min";
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  
+  if (hours > 0) {
+    return `${hours}h ${minutes.toString().padStart(2, '0')}min`;
+  }
+  return `${minutes}min`;
+};
+
+// Petite fonction utilitaire pour simuler un délai API (Fake API Call) A SUPPRIMER APRES TESTS
+export const mockFetchPlaylists = async (provider: string): Promise<NormalizedPlaylist[]> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      // On filtre juste pour faire semblant que le back travaille
+      const filtered = MOCK_PLAYLISTS_LIST.filter(p => p.provider === provider);
+      resolve(filtered);
+    }, 1500); // 1.5 secondes de délai pour voir le Skeleton
+  });
 };
