@@ -37,9 +37,11 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
     return () => { mounted = false }
   }, [])
 
-  const alreadyConnected = user?.connectedAccounts?.map(acc => acc.provider) || []
+  const alreadyConnectedProviders = user?.connectedAccounts?.map(acc => acc.provider) || []
 
-  const connectTo = providerList.filter(p => !alreadyConnected.includes(p.enum))
+  const alreadyConnected = providerList.filter(p => alreadyConnectedProviders.includes(p.enum))
+
+  const connectTo = providerList.filter(p => !alreadyConnectedProviders.includes(p.enum))
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -50,10 +52,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <div className="px-3">
           <div className="mt-6">
-            <NavConnections
-              connectTo={connectTo}
-              alreadyConnected={alreadyConnected}
-            />
+            <NavConnections connectTo={connectTo} alreadyConnected={alreadyConnected} />
           </div>
         </div>
       </SidebarContent>

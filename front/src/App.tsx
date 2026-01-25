@@ -8,6 +8,7 @@ const Login = React.lazy(() => import('./pages/Login'))
 const Register = React.lazy(() => import('./pages/Register'))
 const Dashboard = React.lazy(() => import('./pages/Dashboard'))
 const Profile = React.lazy(() => import('./pages/Profile'))
+const SpotifyCallback = React.lazy(() => import('./pages/SpotifyCallback'))
 const Playlists = React.lazy(() => import('./pages/Playlists'))
 const Provider = React.lazy(() => import('./pages/Provider'))
 import { ProtectedRoute } from '@/components/ProtectedRoute'
@@ -28,6 +29,8 @@ export default function App() {
               <Route path="/playlists" element={<AppLayout><Playlists /></AppLayout>} />
               <Route path="/provider/:provider" element={<AppLayout><Provider /></AppLayout>} />
             </Route>
+
+            <Route path="/spotify/callback" element={<SpotifyCallback />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

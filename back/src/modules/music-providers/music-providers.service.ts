@@ -2,6 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { MusicProviderInterface, NormalizedPlaylist } from './interfaces/music-provider.interface';
 import { ProviderEnum } from './interfaces/provider.enum';
 import { SpotifyAdapter } from './adapters/spotify/spotify.adapter';
+import { SpotifyAuthService } from './spotify-auth.service';
 
 /**
  * Service pour les providers de musique.
@@ -14,6 +15,7 @@ export class MusicProvidersService {
 
   constructor(
     private readonly spotifyAdapter: SpotifyAdapter,
+    private readonly spotifyAuthService: SpotifyAuthService,
   ) {
     this.registerProviders();
   }
@@ -54,5 +56,12 @@ export class MusicProvidersService {
 
   async getOwnerId(providerType: ProviderEnum, accessToken: string): Promise<string> {
     return this.getProvider(providerType).getOwnerId(accessToken);
+  }
+
+  async getAccessTokenForUser(providerType: ProviderEnum, userId: string): Promise<string> {
+    if (providerType === ProviderEnum.SPOTIFY) {
+      return this.spotifyAuthService.getAccessTokenForUser(userId);
+    }
+    throw new BadRequestException(`getAccessToken not implemented for ${providerType}`);
   }
 }
