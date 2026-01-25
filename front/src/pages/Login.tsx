@@ -1,4 +1,4 @@
-<<<<<<<< HEAD:front/src/components/pages/login.tsx
+
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -10,15 +10,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import auth from "@/lib/auth"
-import { useAuth } from '@/hooks/useAuth'
-========
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
-import auth from '@/lib/auth';
->>>>>>>> origin/main:front/src/pages/Login.tsx
+import { useAuth } from "@/hooks/useAuth"
 
 export function LoginForm({
   className,
