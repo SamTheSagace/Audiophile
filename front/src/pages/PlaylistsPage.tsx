@@ -9,7 +9,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { getProviderConfig } from '@/lib/providers';
 import { MOCK_USER_CONNECTIONS } from '@/data/mock-user';
-import { mockFetchPlaylists } from '@/lib/utils';
+import { getPlaylists } from '@/services/playlist.service';
 import { PlaylistCard } from '@/components/Block/playlists/PlaylistCard';
 import { ExportModal } from '@/components/Block/modals/ExportModal';
 
@@ -31,7 +31,7 @@ export default function PlaylistsPage() {
     isRefetching,
   } = useQuery({
     queryKey: ['playlists', activeProvider],
-    queryFn: () => mockFetchPlaylists(activeProvider),
+    queryFn: () => getPlaylists(activeProvider),
     enabled: isConnected,
   });
 
