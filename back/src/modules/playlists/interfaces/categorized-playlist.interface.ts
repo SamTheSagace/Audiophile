@@ -7,7 +7,6 @@ export interface TrackItem {
   genre: string;
 }
 
-// On garde ce nom car il a du sens pour toi !
 export interface CategorizedPlaylist {
   [categoryName: string]: TrackItem[];
 }

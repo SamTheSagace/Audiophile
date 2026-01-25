@@ -3,26 +3,25 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import auth from '../../lib/auth';
+import auth from '@/lib/auth';
 
-export function RegisterForm({
+export function LoginForm({
   className,
-  onRegister,
-  onSwitchToLogin,
+  onLogin,
+  onSwitchToRegister,
   ...props
-}: React.ComponentProps<'div'> & { onRegister?: () => void; onSwitchToLogin?: () => void }) {
+}: React.ComponentProps<'div'> & { onLogin?: () => void; onSwitchToRegister?: () => void }) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const formData = new FormData(form);
     const email = String(formData.get('email') || '');
     const password = String(formData.get('password') || '');
-    const displayName = String(formData.get('displayName') || '');
     try {
-      await auth.register(email, password, displayName);
-      onRegister?.();
-    } catch (err: any) {
-      alert(err?.message || 'Register failed');
+      await auth.login(email, password);
+      onLogin?.();
+    } catch (err) {
+      alert('Login failed');
     }
   };
 
@@ -33,35 +32,35 @@ export function RegisterForm({
           <form onSubmit={handleSubmit} className="p-6 md:p-8">
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Create account</h1>
-                <p className="text-muted-foreground text-balance">Register a new account</p>
+                <h1 className="text-2xl font-bold">Welcome back</h1>
+                <p className="text-muted-foreground text-balance">Login to your Acme Inc account</p>
               </div>
-              <Field>
-                <FieldLabel htmlFor="displayName">Display name</FieldLabel>
-                <Input id="displayName" name="displayName" placeholder="Your name" required />
-              </Field>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input id="email" name="email" type="email" placeholder="m@example.com" required />
               </Field>
               <Field>
-                <FieldLabel htmlFor="password">Password</FieldLabel>
+                <div className="flex items-center">
+                  <FieldLabel htmlFor="password">Password</FieldLabel>
+                  <a href="#" className="ml-auto text-sm underline-offset-2 hover:underline">
+                    Forgot your password?
+                  </a>
+                </div>
                 <Input id="password" name="password" type="password" required />
               </Field>
               <Field>
-                <Button type="submit">Create account</Button>
+                <Button type="submit">Login</Button>
               </Field>
-              <FieldDescription>
-                Already have an account?{' '}
+              <FieldDescription className="text-center">
+                Don&apos;t have an account?{' '}
                 <a
-                  href="#"
                   onClick={e => {
                     e.preventDefault();
-                    onSwitchToLogin?.();
+                    onSwitchToRegister?.();
                   }}
-                  className="text-sm underline"
+                  className="hover:cursor-pointer"
                 >
-                  Sign in
+                  Sign up
                 </a>
               </FieldDescription>
             </FieldGroup>
@@ -72,10 +71,8 @@ export function RegisterForm({
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        By creating an account, you agree to our <a href="#">Terms</a>.
+        By clicking continue, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
       </FieldDescription>
     </div>
   );
 }
-
-export default RegisterForm;

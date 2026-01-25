@@ -1,27 +1,28 @@
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '@/components/ui/field';
+import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import auth from '../../lib/auth';
+import auth from '@/lib/auth';
 
-export function LoginForm({
+export function RegisterForm({
   className,
-  onLogin,
-  onSwitchToRegister,
+  onRegister,
+  onSwitchToLogin,
   ...props
-}: React.ComponentProps<'div'> & { onLogin?: () => void; onSwitchToRegister?: () => void }) {
+}: React.ComponentProps<'div'> & { onRegister?: () => void; onSwitchToLogin?: () => void }) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const formData = new FormData(form);
     const email = String(formData.get('email') || '');
     const password = String(formData.get('password') || '');
+    const displayName = String(formData.get('displayName') || '');
     try {
-      await auth.login(email, password);
-      onLogin?.();
-    } catch (err) {
-      alert('Login failed');
+      await auth.register(email, password, displayName);
+      onRegister?.();
+    } catch (err: any) {
+      alert(err?.message || 'Register failed');
     }
   };
 
@@ -32,35 +33,35 @@ export function LoginForm({
           <form onSubmit={handleSubmit} className="p-6 md:p-8">
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Welcome back</h1>
-                <p className="text-muted-foreground text-balance">Login to your Acme Inc account</p>
+                <h1 className="text-2xl font-bold">Create account</h1>
+                <p className="text-muted-foreground text-balance">Register a new account</p>
               </div>
+              <Field>
+                <FieldLabel htmlFor="displayName">Display name</FieldLabel>
+                <Input id="displayName" name="displayName" placeholder="Your name" required />
+              </Field>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input id="email" name="email" type="email" placeholder="m@example.com" required />
               </Field>
               <Field>
-                <div className="flex items-center">
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a href="#" className="ml-auto text-sm underline-offset-2 hover:underline">
-                    Forgot your password?
-                  </a>
-                </div>
+                <FieldLabel htmlFor="password">Password</FieldLabel>
                 <Input id="password" name="password" type="password" required />
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <Button type="submit">Create account</Button>
               </Field>
-              <FieldDescription className="text-center">
-                Don&apos;t have an account?{' '}
+              <FieldDescription>
+                Already have an account?{' '}
                 <a
+                  href="#"
                   onClick={e => {
                     e.preventDefault();
-                    onSwitchToRegister?.();
+                    onSwitchToLogin?.();
                   }}
-                  className="hover:cursor-pointer"
+                  className="text-sm underline"
                 >
-                  Sign up
+                  Sign in
                 </a>
               </FieldDescription>
             </FieldGroup>
@@ -71,8 +72,10 @@ export function LoginForm({
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+        By creating an account, you agree to our <a href="#">Terms</a>.
       </FieldDescription>
     </div>
   );
 }
+
+export default RegisterForm;
