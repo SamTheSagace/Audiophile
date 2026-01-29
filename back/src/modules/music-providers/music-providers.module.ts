@@ -8,6 +8,7 @@ import { SpotifyBrowser } from './adapters/spotify/spotify-browser.service';
 import { ProviderRegistry } from './auth/provider-registry.service';
 import { GenericAuthController } from './auth/generic-auth.controller';
 import { ConnectedAccount } from '../users/entities/connected-account.entity';
+import { SpotifyAuthHandler } from './auth/spotify-auth.handler';
 
 @Module({
   imports: [HttpModule, TypeOrmModule.forFeature([ConnectedAccount])],
@@ -18,6 +19,15 @@ import { ConnectedAccount } from '../users/entities/connected-account.entity';
     SpotifyBrowser,
     SpotifyManager,
     ProviderRegistry,
+    SpotifyAuthHandler,
+    {
+      provide: 'SPOTIFY_HANDLER_REGISTRATION',
+      useFactory: (registry: ProviderRegistry, handler: SpotifyAuthHandler) => {
+        registry.register(handler);
+        return true;
+      },
+      inject: [ProviderRegistry, SpotifyAuthHandler],
+    },
   ],
   exports: [MusicProvidersService],
 })

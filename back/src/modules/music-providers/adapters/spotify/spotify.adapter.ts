@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { SpotifyManager } from './spotify-manager.service';
 import { SpotifyBrowser } from './spotify-browser.service';
-import { MusicProviderInterface, NormalizedPlaylist } from '../../interfaces/music-provider.interface';
+import {
+  MusicProviderInterface,
+  NormalizedPlaylist,
+} from '../../interfaces/music-provider.interface';
 
 @Injectable()
 export class SpotifyAdapter implements MusicProviderInterface {

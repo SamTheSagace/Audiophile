@@ -19,6 +19,7 @@ export interface NormalizedTrack {
 export interface NormalizedPlaylist {
   id: string;
   name: string;
+  imageUrl?: string;
   provider: ProviderType;
   tracks: NormalizedTrack[];
 }

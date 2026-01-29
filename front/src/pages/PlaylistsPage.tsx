@@ -145,7 +145,7 @@ export default function PlaylistsPage() {
                 <PlaylistCard
                   key={playlist.id}
                   playlist={playlist}
-                  coverUrl={`https://picsum.photos/seed/${playlist.id}/400/400`}
+                  coverUrl={ playlist.imageUrl ?? `https://picsum.photos/seed/${playlist.id}/400/400`}
                   onClick={id => navigate(`/playlist/${id}`)}
                   onSort={id => console.log('Sort', id)}
                   onExport={(id) => handleExportClick(id)}
