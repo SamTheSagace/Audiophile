@@ -1,6 +1,6 @@
-import { Playlist } from 'src/modules/playlists/entities/playlist.entity';
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { ConnectedAccount } from './connected-account.entity';
+import { Playlist } from '../../playlists/entities/playlist.entity';
 
 @Entity('users')
 export class User {
