@@ -2,6 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import {
   MusicProviderInterface,
   NormalizedPlaylist,
+  PlaylistSummary,
 } from './interfaces/music-provider.interface';
 import { ProviderEnum } from './interfaces/provider.enum';
 import { SpotifyAdapter } from './adapters/spotify/spotify.adapter';
@@ -44,7 +45,7 @@ export class MusicProvidersService {
   async getUserPlaylists(
     providerType: ProviderEnum,
     accessToken: string,
-  ): Promise<NormalizedPlaylist[]> {
+  ): Promise<PlaylistSummary[]> {
     const provider = this.getProvider(providerType);
     return provider.getUserPlaylists(accessToken);
   }

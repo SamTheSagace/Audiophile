@@ -5,7 +5,7 @@ export type TokenResult = {
   refreshToken?: string;
   expiresIn?: number;
   scope?: string;
-}
+};
 
 export interface ProviderAuthHandler {
   provider: ProviderEnum;

@@ -5,7 +5,10 @@ import {
 } from '@nestjs/common';
 import { MusicProvidersService } from '../music-providers/music-providers.service';
 import { ProviderEnum } from '../music-providers/interfaces/provider.enum';
-import { NormalizedPlaylist } from '../music-providers/interfaces/music-provider.interface';
+import {
+  NormalizedPlaylist,
+  PlaylistSummary,
+} from '../music-providers/interfaces/music-provider.interface';
 import { PlaylistCategorizerService } from './playlist-categorizer.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Playlist } from './entities/playlist.entity';
@@ -31,7 +34,7 @@ export class PlaylistsService {
   async findAllByProvider(
     provider: ProviderEnum,
     userId: string,
-  ): Promise<NormalizedPlaylist[]> {
+  ): Promise<PlaylistSummary[]> {
     const accessToken = await this.getAccessTokenOrThrow(userId, provider);
     return this.musicProvidersService.getUserPlaylists(provider, accessToken);
   }

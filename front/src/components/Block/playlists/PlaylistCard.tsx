@@ -2,14 +2,14 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MoreVertical, Music, ArrowRight, Pencil, Trash2 } from 'lucide-react';
-import { type NormalizedPlaylist } from '@/types/playlist.types';
+import { type PlaylistSummary } from '@/types/playlist.types';
 import { formatDuration } from '@/lib/utils';
 import { getProviderConfig } from '@/lib/providers';
 
 // --- Component Props ---
 
 interface PlaylistCardProps {
-  playlist: NormalizedPlaylist;
+  playlist: PlaylistSummary;
   coverUrl?: string;
   description?: string;
   onClick?: (id: string) => void;
@@ -25,14 +25,12 @@ export const PlaylistCard = ({ playlist, coverUrl, description, onClick, onRenam
   const { color, bgStyle } = getProviderConfig(playlist.provider);
   const providerConfig = getProviderConfig(playlist.provider);
 
-  const totalDuration = playlist.tracks.reduce((acc, track) => acc + track.duration, 0);
-  const formattedDuration = formatDuration(totalDuration);
   const imageSrc = coverUrl || 'https://placehold.co/400x300/E2E8F0/1E293B?text=No+Cover';
   const descText = description || `${providerConfig.label}`;
 
   return (
     <Card
-      className="p-0 border-0 overflow-hidden group transition-all duration-300 ring-2 ring-[var(--provider-color)] hover:ring-4 hover:shadow-md flex flex-col h-full"
+      className="p-0 border-0 overflow-hidden group transition-all duration-300 ring-2 ring-(--provider-color) hover:ring-4 hover:shadow-md flex flex-col h-full"
       style={{ '--provider-color': color } as React.CSSProperties }
     >
       <div 
@@ -91,13 +89,11 @@ export const PlaylistCard = ({ playlist, coverUrl, description, onClick, onRenam
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
             <Music size={14} />
-            <span>{playlist.tracks.length} titres</span>
+            <span>{playlist.trackCount} titres</span>
           </div>
           <span>•</span>
-          <div>{formattedDuration}</div>
+          <div>{providerConfig.label}</div>
         </div>
-
-        <p className="text-sm text-muted-foreground line-clamp-2">{descText}</p>
       </CardContent>
 
       <CardFooter className="p-4 pt-0 mt-auto">

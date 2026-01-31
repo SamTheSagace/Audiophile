@@ -5,11 +5,11 @@ import { AxiosResponse } from 'axios';
 import {
   NormalizedPlaylist,
   NormalizedTrack,
+  PlaylistSummary,
 } from '../../interfaces/music-provider.interface';
 import { ProviderEnum } from '../../interfaces/provider.enum';
 import {
   SpotifyPlaylist,
-  SpotifyPagedPlaylistTrack,
   SpotifyPlaylistSummary,
   SpotifyTrack,
   SpotifyPlaylistTracksResponse,
@@ -41,7 +41,7 @@ export class SpotifyBrowser {
     }
   }
 
-  async getUserPlaylists(accessToken: string): Promise<NormalizedPlaylist[]> {
+  async getUserPlaylists(accessToken: string): Promise<PlaylistSummary[]> {
     try {
       const { data } = await firstValueFrom<
         AxiosResponse<SpotifyPlaylistSummary>
@@ -51,26 +51,18 @@ export class SpotifyBrowser {
         }),
       );
 
-      const arrayPlaylists: NormalizedPlaylist[] = [];
-
-      for (const item of data.items) {
-        const idPlaylist = item.id;
-
-        // On retrouve les infos de la playlist cible (call api)
-        const playlist = await this.getPlaylistDetails(idPlaylist, accessToken);
-
-        const tracks: NormalizedTrack[] = playlist.tracks;
-
-        arrayPlaylists.push({
-          id: idPlaylist,
+      const playlists: PlaylistSummary[] = data.items.map((item) => {
+        return {
+          id: item.id,
           name: item.name,
-          imageUrl: item.images[0]?.url,
+          imageUrl: item.images?.[0]?.url,
           provider: ProviderEnum.SPOTIFY,
-          tracks: tracks,
-        });
-      }
+          trackCount: item.tracks.total,
+        };
+      });
 
-      return arrayPlaylists;
+      return playlists;
+      
     } catch (error) {
       console.error('Spotify: Erreur User Playlists', error.response?.data);
       throw new Error('Échec récupération playlists Spotify');
@@ -157,8 +149,10 @@ export class SpotifyBrowser {
         };
       });
 
-      if(tracks.length === 0) {
-        console.warn(`Spotify: Playlist ${playlistId} vide ou sans tracks valides.`);
+      if (tracks.length === 0) {
+        console.warn(
+          `Spotify: Playlist ${playlistId} vide ou sans tracks valides.`,
+        );
       }
 
       return {

@@ -86,7 +86,7 @@ export default function PlaylistsPage() {
           )}
         </div>
 
-        <div className="min-h-[400px]">
+        <div className="min-h-100">
           {/* ETAT 1 : NON CONNECTÉ */}
           {!isConnected ? (
             <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed rounded-xl bg-muted/30 text-center space-y-6">

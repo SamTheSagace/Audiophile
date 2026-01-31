@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { AxiosResponse } from 'axios';
-import { NormalizedPlaylist } from '../../interfaces/music-provider.interface';
+import { NormalizedPlaylist, PlaylistSummary } from '../../interfaces/music-provider.interface';
 import { ProviderEnum } from '../../interfaces/provider.enum';
 
 // Ne pas modifié les anys ici, car les réponses de l'API Spotify sont dynamiques et non typées strictement.
@@ -31,7 +31,7 @@ export class DeezerBrowser {
     }
   }
 
-  async getUserPlaylists(accessToken: string): Promise<NormalizedPlaylist[]> {
+  async getUserPlaylists(accessToken: string): Promise<PlaylistSummary[]> {
     try {
       const { data } = await firstValueFrom<AxiosResponse<any>>(
         this.httpService.get(`${this.BASE_URL}/me/playlists`, {
