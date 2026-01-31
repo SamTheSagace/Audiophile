@@ -43,6 +43,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
+    "@golevelup/ts-jest": "^1.2.0",
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
@@ -57,6 +58,7 @@
     "eslint-plugin-prettier": "^5.2.2",
     "globals": "^16.0.0",
     "jest": "^30.0.0",
+    "jest-mock-extended": "^4.0.0",
     "prettier": "^3.4.2",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
@@ -82,7 +84,21 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    },
+    "// COMMENTAIRE": "AJOUTE CE BLOC CI-DESSOUS",
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      ".module.ts",
+      ".dto.ts",
+      ".entity.ts",
+      "main.ts",
+      "index.ts",
+      ".filter.ts",
+      ".middleware.ts"
+    ]
   },
   "volta": {
     "node": "22.21.1"
