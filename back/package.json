@@ -88,7 +88,6 @@
     "moduleNameMapper": {
       "^src/(.*)$": "<rootDir>/$1"
     },
-    "// COMMENTAIRE": "AJOUTE CE BLOC CI-DESSOUS",
     "coveragePathIgnorePatterns": [
       "node_modules",
       ".module.ts",
