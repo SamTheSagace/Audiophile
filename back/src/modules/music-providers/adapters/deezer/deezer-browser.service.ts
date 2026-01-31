@@ -85,6 +85,7 @@ export class DeezerBrowser {
 
       return {
         id: data.id,
+        imageUrl: '',
         name: data.name,
         provider: ProviderEnum.DEEZER,
         tracks: tracks,

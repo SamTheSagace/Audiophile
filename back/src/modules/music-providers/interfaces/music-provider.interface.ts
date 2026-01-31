@@ -3,7 +3,7 @@ import { ProviderEnum } from './provider.enum';
 export interface NormalizedPlaylist {
   id: string;
   name: string;
-  imageUrl?: string;
+  imageUrl: string;
   provider: ProviderEnum;
   tracks: NormalizedTrack[];
 }

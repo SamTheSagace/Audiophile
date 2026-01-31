@@ -13,13 +13,8 @@ import {
   SpotifyPlaylistSummary,
   SpotifyTrack,
   SpotifyPlaylistTracksResponse,
+  SpotifyPlaylistTrackItem,
 } from '../../interfaces/spotify.interface';
-
-// Ne pas modifié les anys ici, car les réponses de l'API Spotify sont dynamiques et non typées strictement.
-// On pourrait créer des interfaces spécifiques pour chaque réponse, mais cela alourdirait le code inutilement. (j'ai essayé et c'est chiant)
-// Le but ici est de garder la flexibilité tout en gérant les erreurs (et vous avez pas le choix c'est une dictature).
-// Les anys sont confinés à ce service uniquement.
-// Donc faites pas chier.
 
 @Injectable()
 export class SpotifyBrowser {
@@ -62,7 +57,6 @@ export class SpotifyBrowser {
       });
 
       return playlists;
-      
     } catch (error) {
       console.error('Spotify: Erreur User Playlists', error.response?.data);
       throw new Error('Échec récupération playlists Spotify');
@@ -76,8 +70,7 @@ export class SpotifyBrowser {
     const maxTracksToFetchPerCall = 50;
 
     try {
-      // 1. Récupérer la playlist brute
-      let spotifyTracks: SpotifyTrack[] = [];
+      let playlistTrackItems: SpotifyPlaylistTrackItem[] = [];
 
       const {
         data: initialData,
@@ -116,36 +109,35 @@ export class SpotifyBrowser {
           ),
         );
 
-        spotifyTracks = spotifyTracks.concat(data.items);
+        playlistTrackItems = playlistTrackItems.concat(data.items);
       }
 
-      const rawTracks = spotifyTracks.filter((item) => item !== null);
+      // Extraire uniquement les objets `track` (certains items peuvent être null ou avoir track=null)
+      const rawTracks = playlistTrackItems
+        .map((item) => item.track)
+        .filter((t): t is SpotifyTrack => !!t);
 
       // 2. Logique des Genres
       const artistIds = [
-        ...new Set(rawTracks.map((item) => item.artists?.[0]?.id)),
-      ].filter(Boolean);
+        ...new Set(rawTracks.map((track) => track.artists?.[0]?.id)),
+      ].filter(Boolean) as string[];
 
-      const genresMap = await this.getArtistsGenres(
-        artistIds as string[],
-        accessToken,
-      );
+      const genresMap = await this.getArtistsGenres(artistIds, accessToken);
 
       // 3. Mapping final
-      const tracks = rawTracks.map((item) => {
-        const trackData = item;
+      const tracks = rawTracks.map((trackData) => {
         const artistId = trackData.artists?.[0]?.id;
         const genres = artistId ? genresMap.get(artistId) : [];
 
         return {
-          id: trackData.id,
-          title: trackData.name,
-          artist: trackData.artists?.[0]?.name || 'Unknown',
-          album: trackData.album?.name || 'Unknown',
+          id: trackData.id ?? '',
+          title: trackData.name ?? 'Unknown',
+          artist: trackData.artists?.[0]?.name ?? 'Unknown',
+          album: trackData.album?.name ?? 'Unknown',
           duration: trackData.duration_ms
             ? Math.round(trackData.duration_ms / 1000)
             : 0,
-          genre: genres ? genres[0] : 'Unknown',
+          genre: genres && genres.length > 0 ? genres[0] : 'Indéfini',
         };
       });
 
@@ -157,6 +149,7 @@ export class SpotifyBrowser {
 
       return {
         id: playlistId,
+        imageUrl: initialData.images?.[0]?.url || '',
         provider: ProviderEnum.SPOTIFY,
         name: initialData.name,
         tracks: tracks as NormalizedTrack[],
