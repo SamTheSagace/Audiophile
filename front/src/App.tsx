@@ -55,7 +55,7 @@ export default function App() {
             <Route element={<MainLayout />}>
               <Route path="/" element={<PlaylistsPage />} />
               <Route path="/playlists" element={<PlaylistsPage />} />
-              <Route path="/playlist/:id" element={<PlaylistPage />} />
+              <Route path="/playlist/:provider/:id" element={<PlaylistPage />} />
               <Route path="/provider/:provider" element={<ProviderPage />} />
               <Route path="/profile" element={<Profile />} />
             </Route>

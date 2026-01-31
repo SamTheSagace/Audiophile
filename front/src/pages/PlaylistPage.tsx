@@ -21,12 +21,12 @@ import type { NormalizedPlaylist, CategorizedPlaylist } from '@/types/playlist.t
 import { getPlaylistById } from '@/services/playlist.service';
 
 export default function PlaylistPage() {
-  const { id } = useParams();
+  const { provider, id } = useParams<{ provider?: string; id?: string }>();
 
   const { data: playlist, isLoading, isError, error } = useQuery<NormalizedPlaylist>({
-    queryKey: ['playlist', id],
-    queryFn: () => getPlaylistById('spotify', id!),
-    enabled: !!id,
+    queryKey: ['playlist', provider, id],
+    queryFn: () => getPlaylistById(provider ?? '', id!),
+    enabled: !!provider && !!id,
   });
 
   console.log("Données de la playlist :", playlist);

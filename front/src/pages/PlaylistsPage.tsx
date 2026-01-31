@@ -146,7 +146,7 @@ export default function PlaylistsPage() {
                   key={playlist.id}
                   playlist={playlist}
                   coverUrl={ playlist.imageUrl ?? `https://picsum.photos/seed/${playlist.id}/400/400`}
-                  onClick={id => navigate(`/playlist/${id}`)}
+                  onClick={id => navigate(`/playlist/${playlist.provider}/${id}`)}
                   onSort={id => console.log('Sort', id)}
                   onExport={(id) => handleExportClick(id)}
                   onRename={id => console.log('Rename', id)}
@@ -179,10 +179,13 @@ export default function PlaylistsPage() {
           ) : null}
         </div>
       </Tabs>
-      <ExportModal 
-              isOpen={!!playlistToExport}
-              onClose={() => setPlaylistToExport(null)}
-              onConfirm={handleExportConfirm} categoryName={''} provider={'spotify'}       />
+      <ExportModal
+        isOpen={!!playlistToExport}
+        onClose={() => setPlaylistToExport(null)}
+        onConfirm={handleExportConfirm}
+        categoryName={''}
+        provider={activeProvider}
+      />
     </div>
   );
 }
