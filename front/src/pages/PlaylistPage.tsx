@@ -29,9 +29,6 @@ export default function PlaylistPage() {
     enabled: !!provider && !!id,
   });
 
-  console.log("Données de la playlist :", playlist);
-
-  // Do not use mock fallback: keep real loading state and show skeletons.
   const providerConfig = playlist ? getProviderConfig(playlist.provider) : { label: '', color: '', bgStyle: '' } as {
     label: string;
     color: string;
