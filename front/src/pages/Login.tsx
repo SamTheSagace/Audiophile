@@ -1,16 +1,24 @@
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
-import auth from '@/lib/auth';
+
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import auth from "@/lib/auth"
+import { useAuth } from "@/hooks/useAuth"
 
 export function LoginForm({
   className,
   onLogin,
-  onSwitchToRegister,
   ...props
-}: React.ComponentProps<'div'> & { onLogin?: () => void; onSwitchToRegister?: () => void }) {
+}: React.ComponentProps<"div"> & { onLogin?: () => void}) {
+  const { login } = useAuth();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -18,9 +26,14 @@ export function LoginForm({
     const email = String(formData.get('email') || '');
     const password = String(formData.get('password') || '');
     try {
-      await auth.login(email, password);
+      if (login) {
+        await login(email, password)
+      } else {
+        await auth.login(email, password)
+      }
       onLogin?.();
     } catch (err) {
+      console.warn('Login failed', err);
       alert('Login failed');
     }
   };
@@ -32,8 +45,10 @@ export function LoginForm({
           <form onSubmit={handleSubmit} className="p-6 md:p-8">
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Welcome back</h1>
-                <p className="text-muted-foreground text-balance">Login to your Acme Inc account</p>
+                <h1 className="text-2xl font-bold">Bienvenue !</h1>
+                <p className="text-muted-foreground text-balance">
+                  Connectez-vous à votre compte Audiophile pour continuer.
+                </p>
               </div>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -41,27 +56,21 @@ export function LoginForm({
               </Field>
               <Field>
                 <div className="flex items-center">
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a href="#" className="ml-auto text-sm underline-offset-2 hover:underline">
-                    Forgot your password?
+                  <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
+                  <a
+                    href="#"
+                    className="ml-auto text-sm underline-offset-2 hover:underline"
+                  >
+                    Mot de passe oublié ?
                   </a>
                 </div>
                 <Input id="password" name="password" type="password" required />
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <Button type="submit">Se connecter</Button>
               </Field>
               <FieldDescription className="text-center">
-                Don&apos;t have an account?{' '}
-                <a
-                  onClick={e => {
-                    e.preventDefault();
-                    onSwitchToRegister?.();
-                  }}
-                  className="hover:cursor-pointer"
-                >
-                  Sign up
-                </a>
+                Vous n'avez pas de compte ? <a href="/register" className="hover:cursor-pointer">Inscrivez-vous</a>
               </FieldDescription>
             </FieldGroup>
           </form>
@@ -71,7 +80,8 @@ export function LoginForm({
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+        En cliquant sur continuer, vous acceptez nos <a href="#">Conditions d'utilisation</a>{" "}
+        et <a href="#">Politique de confidentialité</a>.
       </FieldDescription>
     </div>
   );

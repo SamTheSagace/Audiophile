@@ -19,10 +19,18 @@ export interface NormalizedTrack {
 export interface NormalizedPlaylist {
   id: string;
   name: string;
+  imageUrl?: string;
   provider: ProviderType;
   tracks: NormalizedTrack[];
 }
 
+export interface PlaylistSummary {
+  id: string;
+  name: string;
+  imageUrl?: string;
+  provider: ProviderType;
+  trackCount: number;
+}
 
 export interface TrackItem {
   id: string;

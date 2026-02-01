@@ -5,8 +5,10 @@ import auth from './lib/auth';
 import MainLayout from './components/layout/MainLayout';
 import PlaylistsPage from './pages/PlaylistsPage';
 import PlaylistPage from './pages/PlaylistPage';
-import { LoginForm } from './pages/login';
-import RegisterForm from './pages/register';
+import { LoginForm } from './pages/Login';
+import { RegisterForm } from './pages/Register';
+import ProviderPage from "./pages/Provider";
+import Profile from './pages/Profile';
 
 const queryClient = new QueryClient();
 
@@ -53,7 +55,9 @@ export default function App() {
             <Route element={<MainLayout />}>
               <Route path="/" element={<PlaylistsPage />} />
               <Route path="/playlists" element={<PlaylistsPage />} />
-              <Route path="/playlist/:id" element={<PlaylistPage />} />
+              <Route path="/playlist/:provider/:id" element={<PlaylistPage />} />
+              <Route path="/provider/:provider" element={<ProviderPage />} />
+              <Route path="/profile" element={<Profile />} />
             </Route>
           )}
         </Routes>

@@ -10,7 +10,7 @@ export const apiClient = axios.create({
 
 // Intercepteur pour injecter le token JWT automatiquement
 apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('audiophile_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

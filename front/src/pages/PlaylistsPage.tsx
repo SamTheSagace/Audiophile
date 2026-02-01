@@ -9,7 +9,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { getProviderConfig } from '@/lib/providers';
 import { MOCK_USER_CONNECTIONS } from '@/data/mock-user';
-import { mockFetchPlaylists } from '@/lib/utils';
+import { getPlaylists } from '@/services/playlist.service';
 import { PlaylistCard } from '@/components/Block/playlists/PlaylistCard';
 import { ExportModal } from '@/components/Block/modals/ExportModal';
 
@@ -31,7 +31,7 @@ export default function PlaylistsPage() {
     isRefetching,
   } = useQuery({
     queryKey: ['playlists', activeProvider],
-    queryFn: () => mockFetchPlaylists(activeProvider),
+    queryFn: () => getPlaylists(activeProvider),
     enabled: isConnected,
   });
 
@@ -86,7 +86,7 @@ export default function PlaylistsPage() {
           )}
         </div>
 
-        <div className="min-h-[400px]">
+        <div className="min-h-100">
           {/* ETAT 1 : NON CONNECTÉ */}
           {!isConnected ? (
             <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed rounded-xl bg-muted/30 text-center space-y-6">
@@ -145,8 +145,8 @@ export default function PlaylistsPage() {
                 <PlaylistCard
                   key={playlist.id}
                   playlist={playlist}
-                  coverUrl={`https://picsum.photos/seed/${playlist.id}/400/400`}
-                  onClick={id => navigate(`/playlist/${id}`)}
+                  coverUrl={ playlist.imageUrl ?? `https://picsum.photos/seed/${playlist.id}/400/400`}
+                  onClick={id => navigate(`/playlist/${playlist.provider}/${id}`)}
                   onSort={id => console.log('Sort', id)}
                   onExport={(id) => handleExportClick(id)}
                   onRename={id => console.log('Rename', id)}
@@ -179,10 +179,13 @@ export default function PlaylistsPage() {
           ) : null}
         </div>
       </Tabs>
-      <ExportModal 
-              isOpen={!!playlistToExport}
-              onClose={() => setPlaylistToExport(null)}
-              onConfirm={handleExportConfirm} categoryName={''} provider={'spotify'}       />
+      <ExportModal
+        isOpen={!!playlistToExport}
+        onClose={() => setPlaylistToExport(null)}
+        onConfirm={handleExportConfirm}
+        categoryName={''}
+        provider={activeProvider}
+      />
     </div>
   );
 }

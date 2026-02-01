@@ -8,9 +8,8 @@ import auth from '@/lib/auth';
 export function RegisterForm({
   className,
   onRegister,
-  onSwitchToLogin,
   ...props
-}: React.ComponentProps<'div'> & { onRegister?: () => void; onSwitchToLogin?: () => void }) {
+}: React.ComponentProps<"div"> & { onRegister?: () => void }) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -22,6 +21,7 @@ export function RegisterForm({
       await auth.register(email, password, displayName);
       onRegister?.();
     } catch (err: any) {
+      console.warn('Register failed', err);
       alert(err?.message || 'Register failed');
     }
   };
@@ -33,36 +33,28 @@ export function RegisterForm({
           <form onSubmit={handleSubmit} className="p-6 md:p-8">
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Create account</h1>
-                <p className="text-muted-foreground text-balance">Register a new account</p>
+                <h1 className="text-2xl font-bold">Créer un compte</h1>
+                <p className="text-muted-foreground text-balance">
+                  Inscrivez-vous pour profiter pleinement des fonctionnalités d'Audiophile.
+                </p>
               </div>
               <Field>
-                <FieldLabel htmlFor="displayName">Display name</FieldLabel>
-                <Input id="displayName" name="displayName" placeholder="Your name" required />
+                <FieldLabel htmlFor="displayName">Nom d'affichage</FieldLabel>
+                <Input id="displayName" name="displayName" placeholder="Votre nom" required />
               </Field>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input id="email" name="email" type="email" placeholder="m@example.com" required />
               </Field>
               <Field>
-                <FieldLabel htmlFor="password">Password</FieldLabel>
+                <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
                 <Input id="password" name="password" type="password" required />
               </Field>
               <Field>
-                <Button type="submit">Create account</Button>
+                <Button type="submit">Créer un compte</Button>
               </Field>
               <FieldDescription>
-                Already have an account?{' '}
-                <a
-                  href="#"
-                  onClick={e => {
-                    e.preventDefault();
-                    onSwitchToLogin?.();
-                  }}
-                  className="text-sm underline"
-                >
-                  Sign in
-                </a>
+                Vous avez déjà un compte ?  <a href="/login" className="text-sm underline">Connectez-vous</a>
               </FieldDescription>
             </FieldGroup>
           </form>
@@ -72,7 +64,7 @@ export function RegisterForm({
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        By creating an account, you agree to our <a href="#">Terms</a>.
+        En créant un compte, vous acceptez nos <a href="#">Conditions d'utilisation</a> et <a href="#">Politique de confidentialité</a>.
       </FieldDescription>
     </div>
   );

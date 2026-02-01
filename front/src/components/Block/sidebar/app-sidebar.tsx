@@ -21,8 +21,8 @@ import { NavConnections } from './nav-connections';
 import { NavUser } from './nav-user';
 import { PROVIDERS_CONFIG } from '@/lib/providers';
 import { ProviderEnum } from '@/types/playlist.types';
-import { MOCK_USER_CONNECTIONS } from '@/data/mock-user';
 import type { IconType } from 'react-icons';
+import type { PublicUser } from '@/types/user';
 
 // Menu principal de navigation
 const mainNavItems = [
@@ -40,19 +40,28 @@ const mainNavItems = [
 
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation();
-  const [user, setUser] = useState<{ email?: string; userId?: string; display_name?: string } | null>(null);
+  const [user, setUser] = useState< PublicUser | null>(null);
 
-  // --- LOGIQUE DYNAMIQUE DES CONNECTIONS ---
+
+  useEffect(() => {
+    let mounted = true
+    auth.getMe()
+      .then((u : PublicUser) => { if (mounted) setUser(u) })
+      .catch(() => { if (mounted) setUser(null) })
+    return () => { mounted = false }
+  }, [])
+
+    // --- LOGIQUE DYNAMIQUE DES CONNECTIONS ---
   const connectTo: { name: string; url: string; icon: IconType; }[] = [];
   const alreadyConnected: { name: string; url: string; icon: IconType; }[] = [];
 
   Object.values(ProviderEnum).forEach((provider) => {
     const config = PROVIDERS_CONFIG[provider];
-    const isConnected = MOCK_USER_CONNECTIONS[provider]; //TODO Utilise le vrai user.connections plus tard
+    const isConnected = user?.connectedAccounts?.some(acc => acc.provider === provider);
 
     const item = {
         name: config.label,
-        url: '#', //TODO Mettre l'URL d'auth réelle plus tard : `/api/auth/${provider}`
+        url: '/provider/' + config.label.toLowerCase(),
         icon: config.icon
     };
 
@@ -64,21 +73,13 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   });
   // -----------------------------------------
 
-  useEffect(() => {
-    let mounted = true;
-    auth.getMe()
-      .then(u => { if (mounted) setUser(u as any); })
-      .catch(() => { if (mounted) setUser(null); });
-    return () => { mounted = false; };
-  }, []);
-
   return (
     <Sidebar collapsible="icon" {...props}>
       
       {/* --- HEADER (USER) --- */}
       <SidebarHeader>
         {user && (
-          <NavUser user={{ name: user.display_name || user.email || '', email: user.email || '', avatar: '/avatars/shadcn.jpg' }} />
+          <NavUser user={user ? { ...user, avatar: user.avatar || '/avatars/shadcn.jpg' } : undefined} />
         )}
       </SidebarHeader>
 
@@ -122,5 +123,5 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
         <NavActions />
       </SidebarFooter>
     </Sidebar>
-  );
+  )
 }

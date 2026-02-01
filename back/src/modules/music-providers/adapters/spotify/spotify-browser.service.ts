@@ -2,14 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { AxiosResponse } from 'axios';
-import { NormalizedPlaylist } from '../../interfaces/music-provider.interface';
+import {
+  NormalizedPlaylist,
+  NormalizedTrack,
+  PlaylistSummary,
+} from '../../interfaces/music-provider.interface';
 import { ProviderEnum } from '../../interfaces/provider.enum';
-
-// Ne pas modifié les anys ici, car les réponses de l'API Spotify sont dynamiques et non typées strictement.
-// On pourrait créer des interfaces spécifiques pour chaque réponse, mais cela alourdirait le code inutilement. (j'ai essayé et c'est chiant)
-// Le but ici est de garder la flexibilité tout en gérant les erreurs (et vous avez pas le choix c'est une dictature).
-// Les anys sont confinés à ce service uniquement.
-// Donc faites pas chier.
+import {
+  SpotifyPlaylist,
+  SpotifyPlaylistSummary,
+  SpotifyTrack,
+  SpotifyPlaylistTracksResponse,
+  SpotifyPlaylistTrackItem,
+} from '../../interfaces/spotify.interface';
 
 @Injectable()
 export class SpotifyBrowser {
@@ -31,63 +36,123 @@ export class SpotifyBrowser {
     }
   }
 
-  async getUserPlaylists(accessToken: string): Promise<NormalizedPlaylist[]> {
+  async getUserPlaylists(accessToken: string): Promise<PlaylistSummary[]> {
     try {
-      const { data } = await firstValueFrom<AxiosResponse<any>>(
+      const { data } = await firstValueFrom<
+        AxiosResponse<SpotifyPlaylistSummary>
+      >(
         this.httpService.get(`${this.BASE_URL}/me/playlists`, {
           headers: { Authorization: `Bearer ${accessToken}` },
         }),
       );
 
-      return data.items.map((item: any) => ({
-        id: item.id,
-        name: item.name,
-        provider: ProviderEnum.SPOTIFY,
-        tracks: [],
-      }));
+      const playlists: PlaylistSummary[] = data.items.map((item) => {
+        return {
+          id: item.id,
+          name: item.name,
+          imageUrl: item.images?.[0]?.url,
+          provider: ProviderEnum.SPOTIFY,
+          trackCount: item.tracks.total,
+        };
+      });
+
+      return playlists;
     } catch (error) {
       console.error('Spotify: Erreur User Playlists', error.response?.data);
       throw new Error('Échec récupération playlists Spotify');
     }
   }
 
-  async getPlaylistDetails(playlistId: string, accessToken: string): Promise<NormalizedPlaylist> {
+  async getPlaylistDetails(
+    playlistId: string,
+    accessToken: string,
+  ): Promise<NormalizedPlaylist> {
+    const maxTracksToFetchPerCall = 50;
+
     try {
-      // 1. Récupérer la playlist brute
-      const { data } = await firstValueFrom<AxiosResponse<any>>(
+      let playlistTrackItems: SpotifyPlaylistTrackItem[] = [];
+
+      const {
+        data: initialData,
+        status,
+        statusText,
+      } = await firstValueFrom<AxiosResponse<SpotifyPlaylist>>(
         this.httpService.get(`${this.BASE_URL}/playlists/${playlistId}`, {
           headers: { Authorization: `Bearer ${accessToken}` },
         }),
       );
 
-      const rawTracks = data.tracks.items.filter((item: any) => item.track !== null);
+      if (status !== 200) {
+        throw new Error(
+          `Spotify: Échec récupération playlist ${playlistId}, statut ${status}, ${statusText}`,
+        );
+      }
+
+      const totalTracks = initialData.tracks.total;
+      const totalCalls = Math.ceil(totalTracks / maxTracksToFetchPerCall) || 1;
+
+      for (let callIndex = 0; callIndex < totalCalls; callIndex++) {
+        const offset = callIndex * maxTracksToFetchPerCall;
+
+        const { data } = await firstValueFrom<
+          AxiosResponse<SpotifyPlaylistTracksResponse>
+        >(
+          this.httpService.get(
+            `${this.BASE_URL}/playlists/${playlistId}/tracks`,
+            {
+              headers: { Authorization: `Bearer ${accessToken}` },
+              params: {
+                limit: maxTracksToFetchPerCall,
+                offset: offset,
+              },
+            },
+          ),
+        );
+
+        playlistTrackItems = playlistTrackItems.concat(data.items);
+      }
+
+      // Extraire uniquement les objets `track` (certains items peuvent être null ou avoir track=null)
+      const rawTracks = playlistTrackItems
+        .map((item) => item.track)
+        .filter((t): t is SpotifyTrack => !!t);
 
       // 2. Logique des Genres
-      const artistIds = [...new Set(rawTracks.map((item: any) => item.track!.artists[0]?.id))].filter(Boolean);
-      
-      const genresMap = await this.getArtistsGenres(artistIds as string[], accessToken);
+      const artistIds = [
+        ...new Set(rawTracks.map((track) => track.artists?.[0]?.id)),
+      ].filter(Boolean) as string[];
+
+      const genresMap = await this.getArtistsGenres(artistIds, accessToken);
 
       // 3. Mapping final
-      const tracks = rawTracks.map((item: any) => {
-        const trackData = item.track!; 
-        const artistId = trackData.artists[0]?.id;
-        const genres = genresMap.get(artistId) || [];
-        
+      const tracks = rawTracks.map((trackData) => {
+        const artistId = trackData.artists?.[0]?.id;
+        const genres = artistId ? genresMap.get(artistId) : [];
+
         return {
-          id: trackData.id,
-          title: trackData.name,
-          artist: trackData.artists[0]?.name || 'Unknown',
-          album: trackData.album.name,
-          duration: Math.round(trackData.duration_ms / 1000),
-          genre: genres[0] || 'Unknown',
+          id: trackData.id ?? '',
+          title: trackData.name ?? 'Unknown',
+          artist: trackData.artists?.[0]?.name ?? 'Unknown',
+          album: trackData.album?.name ?? 'Unknown',
+          duration: trackData.duration_ms
+            ? Math.round(trackData.duration_ms / 1000)
+            : 0,
+          genre: genres && genres.length > 0 ? genres[0] : 'Indéfini',
         };
       });
 
+      if (tracks.length === 0) {
+        console.warn(
+          `Spotify: Playlist ${playlistId} vide ou sans tracks valides.`,
+        );
+      }
+
       return {
-        id: data.id,
-        name: data.name,
+        id: playlistId,
+        imageUrl: initialData.images?.[0]?.url || '',
         provider: ProviderEnum.SPOTIFY,
-        tracks: tracks,
+        name: initialData.name,
+        tracks: tracks as NormalizedTrack[],
       };
     } catch (error) {
       console.error('Spotify: Erreur Playlist Details', error.response?.data);
@@ -95,7 +160,10 @@ export class SpotifyBrowser {
     }
   }
 
-  private async getArtistsGenres(artistIds: string[], accessToken: string): Promise<Map<string, string[]>> {
+  private async getArtistsGenres(
+    artistIds: string[],
+    accessToken: string,
+  ): Promise<Map<string, string[]>> {
     if (artistIds.length === 0) return new Map();
     const idsToFetch = artistIds.slice(0, 50).join(',');
 
@@ -106,7 +174,7 @@ export class SpotifyBrowser {
           headers: { Authorization: `Bearer ${accessToken}` },
         }),
       );
-      
+
       const map = new Map<string, string[]>();
       data.artists.forEach((artist) => map.set(artist.id, artist.genres));
       return map;

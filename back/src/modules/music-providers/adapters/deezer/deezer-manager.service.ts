@@ -16,7 +16,7 @@ import { firstValueFrom } from 'rxjs';
  */
 @Injectable()
 export class DeezerManager {
-  private readonly BASE_URL = 'https://api.spotify.com/v1';
+  private readonly BASE_URL = 'https://api.deezer.com';
 
   constructor(private readonly httpService: HttpService) {}
 
@@ -32,7 +32,7 @@ export class DeezerManager {
       );
       return data.id;
     } catch (error) {
-      console.error('Spotify: Erreur Création', error.response?.data);
+      console.error('Deezer: Erreur Création', error.response?.data || error.message);
       throw error;
     }
   }
@@ -48,7 +48,7 @@ export class DeezerManager {
         }),
       );
     } catch (error) {
-       console.error('Spotify: Erreur Ajout Tracks', error.response?.data);
+       console.error('Deezer: Erreur Ajout Tracks', error.response?.data || error.message);
        throw error;
     }
   }
