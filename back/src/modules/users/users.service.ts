@@ -72,21 +72,27 @@ export class UsersService {
 
   async remove(id: string) {
     const result = await this.userRepository.delete(id);
-    
+
     if (result.affected === 0) {
       throw new NotFoundException(`User #${id} not found`);
     }
-    
+
     return { deleted: true, id };
   }
 
-  
   //Sauvegarde ou met à jour la connexion à un provider externe (Spotify, Deezer...)
-  async saveProviderConnection(userId: string, provider: ProviderEnum, accessToken: string, providerUserId: string, refreshToken?: string, expiresIn?: number) {
+  async saveProviderConnection(
+    userId: string,
+    provider: ProviderEnum,
+    accessToken: string,
+    providerUserId: string,
+    refreshToken?: string,
+    expiresIn?: number,
+  ) {
     //On cherche si ce lien existe déjà
     let account = await this.accountRepository.findOneBy({
       userId,
-      provider
+      provider,
     });
 
     if (!account) {
@@ -94,14 +100,14 @@ export class UsersService {
       account = this.accountRepository.create({
         userId,
         provider,
-        providerUserId
+        providerUserId,
       });
     }
 
     // 2. Mise à jour des tokens
     account.accessToken = accessToken;
     account.refreshToken = refreshToken;
-    
+
     // Calcul de la date d'expiration (si fournie)
     if (expiresIn) {
       const expirationDate = new Date();
@@ -110,5 +116,21 @@ export class UsersService {
     }
 
     return this.accountRepository.save(account);
+  }
+
+  // Déconnecte un provider externe en supprimant la connexion de la BDD
+  async disconnectProvider(userId: string, provider: ProviderEnum) {
+    const result = await this.accountRepository.delete({
+      userId,
+      provider,
+    });
+
+    if (result.affected === 0) {
+      throw new NotFoundException(
+        `Connexion ${provider} non trouvée pour l'utilisateur #${userId}`,
+      );
+    }
+
+    return { disconnected: true, provider };
   }
 }
