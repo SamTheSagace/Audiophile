@@ -14,4 +14,10 @@ export async function getPlaylistById(provider: string, id: string) {
   return res.data;
 }
 
-export default { getPlaylists, getPlaylistById };
+export async function categorizePlaylist(provider: string, id: string, category: string) {
+  // Exemple d'endpoint: POST /playlists/spotify/{id}/categorize
+  const res = await apiClient.post(`/playlists/${provider}/${id}/categorize`, { category });
+  return res.data;
+}
+
+export default { getPlaylists, getPlaylistById, categorizePlaylist };

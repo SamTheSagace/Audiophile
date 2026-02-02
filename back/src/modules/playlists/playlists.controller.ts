@@ -62,7 +62,7 @@ export class PlaylistsController {
     );
   }
 
-/**
+  /**
    * POST /playlists/:provider/export
    * * Exporte une catégorie de musique vers une nouvelle playlist réelle sur la plateforme (Spotify/Deezer).
    * * Deux modes de fonctionnement :
