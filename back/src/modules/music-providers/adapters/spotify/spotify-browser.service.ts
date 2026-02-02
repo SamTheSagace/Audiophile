@@ -38,7 +38,7 @@ export class SpotifyBrowser {
 
   async getUserPlaylists(accessToken: string): Promise<PlaylistSummary[]> {
     try {
-      const { data } = await firstValueFrom<
+      const { data, status } = await firstValueFrom<
         AxiosResponse<SpotifyPlaylistSummary>
       >(
         this.httpService.get(`${this.BASE_URL}/me/playlists`, {
@@ -58,6 +58,14 @@ export class SpotifyBrowser {
 
       return playlists;
     } catch (error) {
+
+      if (error.response?.status === 401) {
+        throw new Error(
+          'Échec récupération playlists Spotify: SPOTIFY_TOKEN_EXPIRED',
+        );
+      }
+
+
       console.error('Spotify: Erreur User Playlists', error.response?.data);
       throw new Error('Échec récupération playlists Spotify');
     }
