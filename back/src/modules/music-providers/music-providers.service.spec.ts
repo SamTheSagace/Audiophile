@@ -3,20 +3,24 @@ import { BadRequestException } from '@nestjs/common';
 import { createMock, DeepMocked } from '@golevelup/ts-jest';
 import { MusicProvidersService } from './music-providers.service';
 import { SpotifyAdapter } from './adapters/spotify/spotify.adapter';
+import { ProviderRegistry } from './auth/provider-registry.service';
 import { PlaylistSummary } from './interfaces/music-provider.interface';
 import { ProviderEnum } from './interfaces/provider.enum';
 
 describe('MusicProvidersService', () => {
   let service: MusicProvidersService;
   let spotifyAdapterMock: DeepMocked<SpotifyAdapter>;
+  let providerRegistryMock: DeepMocked<ProviderRegistry>;
 
   beforeEach(async () => {
     spotifyAdapterMock = createMock<SpotifyAdapter>();
+    providerRegistryMock = createMock<ProviderRegistry>();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MusicProvidersService,
         { provide: SpotifyAdapter, useValue: spotifyAdapterMock },
+        { provide: ProviderRegistry, useValue: providerRegistryMock },
       ],
     }).compile();
 

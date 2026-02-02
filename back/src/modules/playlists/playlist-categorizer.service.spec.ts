@@ -22,7 +22,7 @@ const mockTrackUnknown: NormalizedTrack = {
   artist: 'Unknown',
   album: 'Unknown',
   duration: 120,
-  genre: 'glitch hop', // Cas "Pas de match"
+  genre: 'IDONTKNOWOMG', // Cas "Pas de match"
 };
 
 const mockTrackNoGenre: NormalizedTrack = {
@@ -80,7 +80,7 @@ describe('PlaylistCategorizerService', () => {
       const result = service.classifyByGenreFamilies(input);
 
       expect(result['Autres']).toBeDefined();
-      expect(result['Autres'][0].genre).toEqual('glitch hop');
+      expect(result['Autres'][0].genre).toEqual('IDONTKNOWOMG');
     });
   });
 });
