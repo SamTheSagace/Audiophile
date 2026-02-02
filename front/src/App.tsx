@@ -6,7 +6,6 @@ import PlaylistPage from './pages/PlaylistPage';
 import { LoginForm } from './pages/Login';
 import { RegisterForm } from './pages/Register';
 import ProviderPage from './pages/Provider';
-import Profile from './pages/Profile';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 const queryClient = new QueryClient();
@@ -46,7 +45,6 @@ export default function App() {
                 {/* Attention à l'ordre des paramètres dans ton path */}
                 <Route path="/playlist/:provider/:id" element={<PlaylistPage />} />
                 <Route path="/provider/:provider" element={<ProviderPage />} />
-                <Route path="/profile" element={<Profile />} />
               </Route>
             </Route>
 
