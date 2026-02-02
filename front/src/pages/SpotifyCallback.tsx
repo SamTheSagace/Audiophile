@@ -2,6 +2,25 @@ import { useAuth } from '@/context/AuthContext'
 import { useEffect, useState } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 
+const REDIRECT_URL_COOKIE = 'provider_redirect_url'
+
+function getRedirectUrlFromCookie(): string | null {
+  const name = `${REDIRECT_URL_COOKIE}=`
+  const decodedCookie = decodeURIComponent(document.cookie)
+  const cookieArray = decodedCookie.split(';')
+  for (let cookie of cookieArray) {
+    cookie = cookie.trim()
+    if (cookie.indexOf(name) === 0) {
+      return decodeURIComponent(cookie.substring(name.length))
+    }
+  }
+  return null
+}
+
+function clearRedirectUrlCookie() {
+  document.cookie = `${REDIRECT_URL_COOKIE}=; path=/; max-age=0`
+}
+
 export default function SpotifyCallback() {
   const [params] = useSearchParams()
   const navigate = useNavigate()
@@ -11,23 +30,28 @@ export default function SpotifyCallback() {
   useEffect(() => {
     const linked = params.get('spotify')
     const error = params.get('spotify_error')
+    const redirectUrl = getRedirectUrlFromCookie()
+    const targetUrl = redirectUrl || '/'
 
     if (linked === 'linked') {
       setMessage('Compte Spotify lié avec succès. Redirection...')
       // refresh user connections
       refresh().catch(() => {})
-      setTimeout(() => navigate('/profile'), 1200)
+      clearRedirectUrlCookie()
+      setTimeout(() => navigate(targetUrl), 1200)
       return
     }
 
     if (error) {
       setMessage(`Erreur Spotify : ${error}`)
-      setTimeout(() => navigate('/profile'), 2500)
+      clearRedirectUrlCookie()
+      setTimeout(() => navigate('/'), 2500)
       return
     }
 
     setMessage('Aucune information Spotify reçue. Redirection...')
-    setTimeout(() => navigate('/profile'), 1200)
+    clearRedirectUrlCookie()
+    setTimeout(() => navigate(targetUrl), 1200)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
