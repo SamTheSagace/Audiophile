@@ -1,72 +1,63 @@
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
-import auth from '@/lib/auth';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { AuthLayout } from "@/components/layout/AuthLayout";
+import { useAuth } from "@/context/AuthContext";
 
-export function RegisterForm({
-  className,
-  onRegister,
-  ...props
-}: React.ComponentProps<"div"> & { onRegister?: () => void }) {
+export function RegisterForm() {
+  const navigate = useNavigate();
+  const { register } = useAuth();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form = e.currentTarget;
-    const formData = new FormData(form);
+    const formData = new FormData(e.currentTarget);
     const email = String(formData.get('email') || '');
     const password = String(formData.get('password') || '');
     const displayName = String(formData.get('displayName') || '');
+
     try {
-      await auth.register(email, password, displayName);
-      onRegister?.();
+      await register(email, password, displayName);
+      navigate('/'); 
+      
     } catch (err: any) {
       console.warn('Register failed', err);
-      alert(err?.message || 'Register failed');
+      alert(err?.message || 'Erreur lors de l\'inscription');
     }
   };
 
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <Card className="overflow-hidden p-0">
-        <CardContent className="grid p-0 md:grid-cols-2">
-          <form onSubmit={handleSubmit} className="p-6 md:p-8">
-            <FieldGroup>
-              <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Créer un compte</h1>
-                <p className="text-muted-foreground text-balance">
-                  Inscrivez-vous pour profiter pleinement des fonctionnalités d'Audiophile.
-                </p>
-              </div>
-              <Field>
-                <FieldLabel htmlFor="displayName">Nom d'affichage</FieldLabel>
-                <Input id="displayName" name="displayName" placeholder="Votre nom" required />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input id="email" name="email" type="email" placeholder="m@example.com" required />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
-                <Input id="password" name="password" type="password" required />
-              </Field>
-              <Field>
-                <Button type="submit">Créer un compte</Button>
-              </Field>
-              <FieldDescription>
-                Vous avez déjà un compte ?  <a href="/login" className="text-sm underline">Connectez-vous</a>
-              </FieldDescription>
-            </FieldGroup>
-          </form>
-          <div className="bg-muted relative hidden md:block">
-            <img src="/placeholder.svg" alt="Image" className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale" />
-          </div>
-        </CardContent>
-      </Card>
-      <FieldDescription className="px-6 text-center">
-        En créant un compte, vous acceptez nos <a href="#">Conditions d'utilisation</a> et <a href="#">Politique de confidentialité</a>.
-      </FieldDescription>
-    </div>
+    <AuthLayout
+      title="Créer un compte"
+      description="Rejoignez AudioPhile pour synchroniser vos musiques."
+      footerLink={{
+        text: "Déjà un compte ?",
+        href: "/login",
+        label: "Connectez-vous"
+      }}
+    >
+      <form onSubmit={handleSubmit} className="grid gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="displayName">Nom d'affichage</Label>
+          <Input id="displayName" name="displayName" placeholder="John Doe" required />
+        </div>
+
+        <div className="grid gap-2">
+          <Label htmlFor="email">Email</Label>
+          <Input id="email" name="email" type="email" placeholder="m@example.com" required />
+        </div>
+        
+        <div className="grid gap-2">
+          <Label htmlFor="password">Mot de passe</Label>
+          <Input id="password" name="password" type="password" required />
+        </div>
+        
+        <Button type="submit" className="w-full">
+          S'inscrire
+        </Button>
+      </form>
+    </AuthLayout>
   );
 }
 

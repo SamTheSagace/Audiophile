@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import { useAuth } from '@/context/AuthContext'
+import { useEffect, useState } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import useAuth from '@/hooks/useAuth'
 
 export default function SpotifyCallback() {
   const [params] = useSearchParams()

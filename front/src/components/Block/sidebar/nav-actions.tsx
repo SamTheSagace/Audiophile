@@ -1,16 +1,11 @@
-import { LogOut, SquareActivity } from "lucide-react"
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { Separator } from "@/components/ui/separator"
-import auth from "@/lib/auth";
-
+import { LogOut, SquareActivity } from 'lucide-react';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+import { Separator } from '@/components/ui/separator';
+import { Link } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 export function NavActions() {
+  const { logout } = useAuth();
 
-  const handleLogout = () => { auth.logout(); globalThis.location.reload(); }
-  
   return (
     <div className="space-y-2">
       <Separator />
@@ -18,10 +13,10 @@ export function NavActions() {
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton asChild className="py-5">
-            <a href="/dashboard" className="flex w-full items-center gap-3">
+            <Link to="/" className="flex w-full items-center gap-3">
               <SquareActivity className="size-4" />
               <span>Tableau de bord</span>
-            </a>
+            </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
@@ -31,7 +26,10 @@ export function NavActions() {
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton asChild className="py-5">
-            <button className="flex items-center gap-3 hover:cursor-pointer" onClick={handleLogout}>
+            <button
+              className="flex w-full items-center gap-3 hover:cursor-pointer hover:text-red-600 transition-colors"
+              onClick={logout}
+            >
               <LogOut className="size-4" />
               <span>Se déconnecter</span>
             </button>
