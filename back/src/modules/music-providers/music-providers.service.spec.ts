@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
-import { createMock, DeepMocked } from '@golevelup/ts-jest'; // L'outil magique
+import { createMock, DeepMocked } from '@golevelup/ts-jest';
 import { MusicProvidersService } from './music-providers.service';
 import { SpotifyAdapter } from './adapters/spotify/spotify.adapter';
-import { NormalizedPlaylist } from './interfaces/music-provider.interface';
+import { PlaylistSummary } from './interfaces/music-provider.interface';
 import { ProviderEnum } from './interfaces/provider.enum';
 
 describe('MusicProvidersService', () => {
@@ -28,23 +28,34 @@ describe('MusicProvidersService', () => {
   });
 
   //TEST DU PATTERN STRATEGY
-  
+
   describe('getUserPlaylists', () => {
     it('should delegate the call to SpotifyAdapter when provider is SPOTIFY', async () => {
       // ARRANGE
       const mockToken = 'fake-token';
-      const expectedPlaylists: NormalizedPlaylist[] = [
-        { id: '1', name: 'Test PL', provider: ProviderEnum.SPOTIFY, tracks: [] }
+      const expectedPlaylists: PlaylistSummary[] = [
+        {
+          id: '1',
+          name: 'Test PL',
+          imageUrl: 'http://example.com/image.jpg',
+          trackCount: 5,
+          provider: ProviderEnum.SPOTIFY,
+        },
       ];
-      
+
       spotifyAdapterMock.getUserPlaylists.mockResolvedValue(expectedPlaylists);
 
       // ACT
-      const result = await service.getUserPlaylists(ProviderEnum.SPOTIFY, mockToken);
+      const result = await service.getUserPlaylists(
+        ProviderEnum.SPOTIFY,
+        mockToken,
+      );
 
       // ASSERT
       expect(result).toBe(expectedPlaylists);
-      expect(spotifyAdapterMock.getUserPlaylists).toHaveBeenCalledWith(mockToken);
+      expect(spotifyAdapterMock.getUserPlaylists).toHaveBeenCalledWith(
+        mockToken,
+      );
     });
 
     it('should throw BadRequestException for an unsupported provider', async () => {
@@ -53,13 +64,13 @@ describe('MusicProvidersService', () => {
 
       // ACT & ASSERT
       await expect(
-        service.getUserPlaylists(unknownProvider, 'token')
+        service.getUserPlaylists(unknownProvider, 'token'),
       ).rejects.toThrow(BadRequestException);
     });
   });
 
   //TEST DE DELEGATION DE PARAMETRES
-  
+
   describe('createPlaylist', () => {
     it('should pass all arguments correctly to the adapter', async () => {
       // ARRANGE
@@ -67,18 +78,24 @@ describe('MusicProvidersService', () => {
       const desc = 'Cool vibes';
       const token = 'xyz';
       const userId = 'user-123';
-      
+
       spotifyAdapterMock.createPlaylist.mockResolvedValue('new-playlist-id');
 
       // ACT
-      await service.createPlaylist(ProviderEnum.SPOTIFY, name, desc, token, userId);
+      await service.createPlaylist(
+        ProviderEnum.SPOTIFY,
+        name,
+        desc,
+        token,
+        userId,
+      );
 
       // ASSERT
       expect(spotifyAdapterMock.createPlaylist).toHaveBeenCalledWith(
         name,
         desc,
         token,
-        userId
+        userId,
       );
     });
   });
@@ -87,10 +104,12 @@ describe('MusicProvidersService', () => {
 
   describe('Handling Adapter Errors', () => {
     it('should propagate errors thrown by the adapter', async () => {
-      spotifyAdapterMock.getOwnerId.mockRejectedValue(new Error('Invalid Token'));
+      spotifyAdapterMock.getOwnerId.mockRejectedValue(
+        new Error('Invalid Token'),
+      );
 
       await expect(
-        service.getOwnerId(ProviderEnum.SPOTIFY, 'bad-token')
+        service.getOwnerId(ProviderEnum.SPOTIFY, 'bad-token'),
       ).rejects.toThrow('Invalid Token');
     });
   });

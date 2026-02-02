@@ -8,10 +8,10 @@ function getRedirectUrlFromCookie(): string | null {
   const name = `${REDIRECT_URL_COOKIE}=`
   const decodedCookie = decodeURIComponent(document.cookie)
   const cookieArray = decodedCookie.split(';')
-  for (let cookie of cookieArray) {
-    cookie = cookie.trim()
-    if (cookie.indexOf(name) === 0) {
-      return decodeURIComponent(cookie.substring(name.length))
+  for (const cookie of cookieArray) {
+    const trimmedCookie = cookie.trim()
+    if (trimmedCookie.startsWith(name)) {
+      return decodeURIComponent(trimmedCookie.substring(name.length))
     }
   }
   return null

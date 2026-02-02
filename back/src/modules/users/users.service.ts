@@ -95,14 +95,11 @@ export class UsersService {
       provider,
     });
 
-    if (!account) {
-      // Création
-      account = this.accountRepository.create({
-        userId,
-        provider,
-        providerUserId,
-      });
-    }
+    account ??= this.accountRepository.create({
+      userId,
+      provider,
+      providerUserId,
+    });
 
     // 2. Mise à jour des tokens
     account.accessToken = accessToken;

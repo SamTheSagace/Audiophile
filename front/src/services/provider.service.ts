@@ -15,11 +15,11 @@ export async function handleConnect(provider: typeof ProviderEnum[keyof typeof P
     if (!res.ok) throw new Error(`Impossible d'obtenir l'URL de connexion pour ${provider}`);
     const body = await res.json();
 
-    if (body.url) window.location.href = body.url;
+    if (body.url) globalThis.location.href = body.url;
 
   } catch (e) {
     console.error(`Connexion avec ${provider} impossible`, e);
-    window.alert(`Impossible d'initier la connexion ${provider}, ${provider} est peut-être pas encore intégré.`);
+    globalThis.alert(`Impossible d'initier la connexion ${provider}, ${provider} est peut-être pas encore intégré.`);
   }
 };
 
@@ -30,7 +30,7 @@ export async function handleDisconnect(provider: typeof ProviderEnum[keyof typeo
     return true;
   } catch (e) {
     console.error(`${provider} déconnexion échouée`, e);
-    window.alert(`Impossible de déconnecter ${provider}`);
+    globalThis.alert(`Impossible de déconnecter ${provider}`);
     return false;
   }
 }

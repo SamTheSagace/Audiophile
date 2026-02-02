@@ -19,7 +19,6 @@ interface Provider {
 export default function SettingsPage() {
   const queryClient = useQueryClient();
   const [user, setUser] = useState<PublicUser | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   // Récupérer les infos utilisateur avec ses connexions
   useEffect(() => {
@@ -80,12 +79,7 @@ export default function SettingsPage() {
             <p className="text-sm text-muted-foreground mt-1">Informations de votre profil</p>
           </div>
 
-          {!user ? (
-            <div className="space-y-3">
-              <Skeleton className="h-16 rounded-lg" />
-              <Skeleton className="h-16 rounded-lg" />
-            </div>
-          ) : (
+          {user ? (
             <div className="space-y-3">
               <div className="p-4 rounded-lg border border-border bg-card/50">
                 <p className="text-xs font-medium text-muted-foreground uppercase">Email</p>
@@ -96,6 +90,11 @@ export default function SettingsPage() {
                 <p className="text-xs font-medium text-muted-foreground uppercase">Nom d'utilisateur</p>
                 <p className="text-base font-semibold mt-2">{user.displayName || 'Non défini'}</p>
               </div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <Skeleton className="h-16 rounded-lg" />
+              <Skeleton className="h-16 rounded-lg" />
             </div>
           )}
         </div>
@@ -163,18 +162,16 @@ export default function SettingsPage() {
                       variant={provider.connected ? 'destructive' : 'default'}
                       className="w-full"
                       style={
-                        !provider.connected
-                          ? { background: config.bgStyle }
-                          : {}
+                        provider.connected
+                          ? {}
+                          : { background: config.bgStyle }
                       }
                     >
-                      {disconnectMutation.isPending ? (
+                      {disconnectMutation.isPending && (
                         <span className="animate-spin">⏳</span>
-                      ) : provider.connected ? (
-                        'Délier le compte'
-                      ) : (
-                        `Connecter ${config.label}`
                       )}
+                      {!disconnectMutation.isPending && provider.connected && 'Délier le compte'}
+                      {!disconnectMutation.isPending && !provider.connected && `Connecter ${config.label}`}
                     </Button>
                   </div>
                 );
@@ -182,14 +179,6 @@ export default function SettingsPage() {
             </div>
           )}
         </div>
-
-        {deleteError && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Erreur</AlertTitle>
-            <AlertDescription>{deleteError}</AlertDescription>
-          </Alert>
-        )}
       </div>
     </div>
   );

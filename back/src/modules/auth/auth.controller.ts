@@ -1,9 +1,8 @@
-import { Controller, Post, Body, UseGuards, Get, Req, Delete, Param } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Req, Delete, Param, Logger } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
 import type { AuthenticatedRequest } from '../../common/interfaces/authenticated-request.interface';
-import { Logger } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { ProviderEnum } from '../music-providers/interfaces/provider.enum';
 
