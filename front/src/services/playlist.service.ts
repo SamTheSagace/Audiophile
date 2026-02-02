@@ -14,10 +14,22 @@ export async function getPlaylistById(provider: string, id: string) {
   return res.data;
 }
 
-export async function categorizePlaylist(provider: string, id: string, category: string) {
-  // Exemple d'endpoint: POST /playlists/spotify/{id}/categorize
-  const res = await apiClient.post(`/playlists/${provider}/${id}/categorize`, { category });
+export async function categorizePlaylist(provider: string, id: string) {
+  // Exemple d'endpoint: GET /playlists/spotify/{id}/categorize
+  const res = await apiClient.get(`/playlists/${provider}/${id}/categorize`);
   return res.data;
 }
 
-export default { getPlaylists, getPlaylistById, categorizePlaylist };
+export async function exportPlaylist(provider: string, id: string, category: string, customName: string) {
+  // Exemple d'endpoint: POST /playlists/spotify/export
+  const body = {
+    sourcePlaylistId: id,
+    categoryName: category,
+    customName,
+  };
+
+  const res = await apiClient.post(`/playlists/${provider}/export`, body);
+  return res.data;
+}
+
+export default { getPlaylists, getPlaylistById, categorizePlaylist, exportPlaylist };

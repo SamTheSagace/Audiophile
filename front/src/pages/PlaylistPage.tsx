@@ -13,12 +13,11 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 // Data & Utils
 import { getProviderConfig } from '@/lib/providers';
 import { formatDuration } from '@/lib/utils';
-import { mockCategorizePlaylist } from '@/data/mock-playlist';
 import { PlaylistTracksTable } from '@/components/Block/playlists/PlaylistTrackTable';
 import { GenreCard } from '@/components/Block/playlists/GenreCard';
 import { ExportModal } from '@/components/Block/modals/ExportModal';
 import type { NormalizedPlaylist, CategorizedPlaylist } from '@/types/playlist.types';
-import { getPlaylistById } from '@/services/playlist.service';
+import { categorizePlaylist, getPlaylistById, exportPlaylist } from '@/services/playlist.service';
 
 export default function PlaylistPage() {
   const { provider, id } = useParams<{ provider?: string; id?: string }>();
@@ -43,7 +42,7 @@ export default function PlaylistPage() {
   const [categorizedData, setCategorizedData] = useState<CategorizedPlaylist | null>(null);
 
   const categorizeMutation = useMutation({
-    mutationFn: (playlistId: string) => mockCategorizePlaylist(playlistId),
+    mutationFn: (playlistId: string) => categorizePlaylist(provider ?? '', playlistId),
     onSuccess: data => {
       setCategorizedData(data);
     },
@@ -65,6 +64,9 @@ export default function PlaylistPage() {
   const handleExportConfirm = (customName: string) => {
     console.log(`EXPORT START: Playlist [${id}] - Category [${exportState.category}] - Name [${customName}]`);
     setExportState({ isOpen: false, category: '' });
+    exportPlaylist(provider ?? '', id ?? '', exportState.category, customName).then(() => {
+      alert('Exportation réussie ! Vérifiez votre compte sur la plateforme.');
+    });
   };
 
   return (
