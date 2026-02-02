@@ -42,7 +42,7 @@ export default function App() {
             <Route element={<ProtectedRoute />}>
               <Route element={<MainLayout />}>
                 <Route path="/" element={<PlaylistsPage />} />
-                <Route path="/playlists" element={<PlaylistsPage />} />
+                {/* <Route path="/playlists" element={<PlaylistsPage />} /> */}
                 {/* Attention à l'ordre des paramètres dans ton path */}
                 <Route path="/playlist/:provider/:id" element={<PlaylistPage />} />
                 <Route path="/provider/:provider" element={<ProviderPage />} />"

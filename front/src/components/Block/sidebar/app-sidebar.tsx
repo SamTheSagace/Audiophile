@@ -31,11 +31,11 @@ const mainNavItems = [
     url: "/",
     icon: Home,
   },
-  {
-    title: "Mes Playlists",
-    url: "/playlists",
-    icon: ListMusic,
-  },
+  // {
+  //   title: "Mes Playlists",
+  //   url: "/playlists",
+  //   icon: ListMusic,
+  // },
 ];
 
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
