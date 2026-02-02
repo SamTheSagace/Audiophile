@@ -1,67 +1,61 @@
-import { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import auth from './lib/auth';
 import MainLayout from './components/layout/MainLayout';
 import PlaylistsPage from './pages/PlaylistsPage';
 import PlaylistPage from './pages/PlaylistPage';
 import { LoginForm } from './pages/Login';
 import { RegisterForm } from './pages/Register';
-import ProviderPage from "./pages/Provider";
+import ProviderPage from './pages/Provider';
 import Profile from './pages/Profile';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
 const queryClient = new QueryClient();
 
+const ProtectedRoute = () => {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="h-screen flex items-center justify-center">Chargement...</div>;
+  return user ? <Outlet /> : <Navigate to="/login" />;
+};
+
+const PublicRoute = () => {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  return user ? <Navigate to="/" /> : <Outlet />;
+};
+
 export default function App() {
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any | null>(null);
-
-  useEffect(() => {
-    const initAuth = async () => {
-      try {
-        const u = await auth.getMe();
-        setUser(u);
-      } catch {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    initAuth();
-  }, []);
-
-  if (loading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
-          {/* --- ROUTES PUBLIQUES --- */}
-          <Route 
-            path="/login" 
-            element={!user ? <LoginForm onLogin={() => window.location.href = '/'} /> : <Navigate to="/" />} 
-          />
-          <Route 
-            path="/register" 
-            element={!user ? <RegisterForm /> : <Navigate to="/" />} 
-          />
-
-          {/* --- ROUTES PROTÉGÉES --- */}
-          {!user ? (
-             <Route path="*" element={<Navigate to="/login" />} />
-          ) : (
-            <Route element={<MainLayout />}>
-              <Route path="/" element={<PlaylistsPage />} />
-              <Route path="/playlists" element={<PlaylistsPage />} />
-              <Route path="/playlist/:provider/:id" element={<PlaylistPage />} />
-              <Route path="/provider/:provider" element={<ProviderPage />} />
-              <Route path="/profile" element={<Profile />} />
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            
+            {/* --- ROUTES PUBLIQUES (Login/Register) --- */}
+            {/* Si connecté -> Redirige vers Home. Sinon -> Affiche la page */}
+            <Route element={<PublicRoute />}>
+              <Route path="/login" element={<LoginForm />} />
+              <Route path="/register" element={<RegisterForm />} />
             </Route>
-          )}
-        </Routes>
-      </BrowserRouter>
+
+            {/* --- ROUTES PROTÉGÉES (App) --- */}
+            {/* Si pas connecté -> Redirige vers Login. Sinon -> Affiche l'app */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={<MainLayout />}>
+                <Route path="/" element={<PlaylistsPage />} />
+                <Route path="/playlists" element={<PlaylistsPage />} />
+                {/* Attention à l'ordre des paramètres dans ton path */}
+                <Route path="/playlist/:provider/:id" element={<PlaylistPage />} />
+                <Route path="/provider/:provider" element={<ProviderPage />} />
+                <Route path="/profile" element={<Profile />} />
+              </Route>
+            </Route>
+
+            {/* Catch-all : Redirige vers l'accueil (qui redirigera vers login si besoin) */}
+            <Route path="*" element={<Navigate to="/" />} />
+            
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
