@@ -4,7 +4,6 @@ import { Separator } from '@/components/ui/separator';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 export function NavActions() {
-  const handleLogout = () => {};
   const { logout } = useAuth();
 
   return (
