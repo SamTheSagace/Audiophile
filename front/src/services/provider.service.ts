@@ -12,13 +12,25 @@ export async function handleConnect(provider: typeof ProviderEnum[keyof typeof P
     }
 
     const res = await auth.authFetch(`${api}/auth/${provider}/login-url`, { method: 'POST', body: JSON.stringify({ redirectUrl }) });
-    if (!res.ok) throw new Error(`Failed to get ${provider} url`);
+    if (!res.ok) throw new Error(`Impossible d'obtenir l'URL de connexion pour ${provider}`);
     const body = await res.json();
 
     if (body.url) window.location.href = body.url;
 
   } catch (e) {
-    console.error(`${provider} connect failed`, e);
-    window.alert(`Impossible d'initier la connexion ${provider}`);
+    console.error(`Connexion avec ${provider} impossible`, e);
+    window.alert(`Impossible d'initier la connexion ${provider}, ${provider} est peut-être pas encore intégré.`);
   }
 };
+
+export async function handleDisconnect(provider: typeof ProviderEnum[keyof typeof ProviderEnum]) {
+  try {
+    const res = await auth.authFetch(`${api}/users/me/providers/${provider}/`, { method: 'DELETE' });
+    if (!res.ok) throw new Error(`Impossible de déconnecter ${provider}`);
+    return true;
+  } catch (e) {
+    console.error(`${provider} déconnexion échouée`, e);
+    window.alert(`Impossible de déconnecter ${provider}`);
+    return false;
+  }
+}
