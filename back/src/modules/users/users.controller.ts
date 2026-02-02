@@ -22,7 +22,10 @@ import { MusicProvidersService } from '../music-providers/music-providers.servic
 // 👇 PRÉFIXE GLOBAL : Toutes les routes ici commenceront par "/users"
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService, private readonly musicProvidersService: MusicProvidersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly musicProvidersService: MusicProvidersService,
+  ) {}
 
   // 👇 POST /users
   // Action : CRÉER (Inscription). On reçoit les données (email, pass...) dans le Body (JSON).
@@ -49,8 +52,8 @@ export class UsersController {
   // Action : MODIFIER PARTIELLEMENT. On change juste ce qui est envoyé (ex: juste le mot de passe).
   @Patch(':id')
   update(
-    @Param('id', ParseUUIDPipe) id: string, 
-    @Body() updateUserDto: UpdateUserDto
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.usersService.update(id, updateUserDto);
   }
@@ -68,17 +71,31 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'))
   async connectProvider(
     @Param('provider', new ParseEnumPipe(ProviderEnum)) provider: ProviderEnum,
-    @Body() body: { accessToken: string; refreshToken?: string; expiresIn?: number },
+    @Body()
+    body: { accessToken: string; refreshToken?: string; expiresIn?: number },
     @Req() req,
   ) {
-    const providerUserId = await this.musicProvidersService.getOwnerId(provider, body.accessToken);
+    const providerUserId = await this.musicProvidersService.getOwnerId(
+      provider,
+      body.accessToken,
+    );
     return this.usersService.saveProviderConnection(
       req.user.userId,
       provider,
       body.accessToken,
       providerUserId,
       body.refreshToken,
-      body.expiresIn
+      body.expiresIn,
     );
+  }
+
+  // 👇 DELETE /users/me/connections/:provider (ex: /users/me/connections/spotify)
+  @Delete('me/providers/:provider')
+  @UseGuards(AuthGuard('jwt'))
+  async disconnectProvider(
+    @Param('provider', new ParseEnumPipe(ProviderEnum)) provider: ProviderEnum,
+    @Req() req,
+  ) {
+    return this.usersService.disconnectProvider(req.user.userId, provider);
   }
 }

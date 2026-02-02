@@ -3,6 +3,7 @@ import {
   LogOut,
   Settings
 } from "lucide-react"
+import { Link } from 'react-router-dom';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -75,7 +76,9 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <Settings />
-                Paramètres
+                <Link to="/settings" className="text-sm">
+                  Paramètres
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

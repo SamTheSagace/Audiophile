@@ -1,24 +1,17 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Sparkles, Music2, PlayCircle, LayoutGrid, List, AlertCircle } from 'lucide-react';
-
-// UI Components
+import { Sparkles, Music2, LayoutGrid, List, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-
-// Custom Components
-
-// Data & Utils
 import { getProviderConfig } from '@/lib/providers';
 import { formatDuration } from '@/lib/utils';
-import { mockCategorizePlaylist } from '@/data/mock-playlist';
 import { PlaylistTracksTable } from '@/components/Block/playlists/PlaylistTrackTable';
 import { GenreCard } from '@/components/Block/playlists/GenreCard';
 import { ExportModal } from '@/components/Block/modals/ExportModal';
 import type { NormalizedPlaylist, CategorizedPlaylist } from '@/types/playlist.types';
-import { getPlaylistById } from '@/services/playlist.service';
+import { categorizePlaylist, getPlaylistById, exportPlaylist } from '@/services/playlist.service';
 
 export default function PlaylistPage() {
   const { provider, id } = useParams<{ provider?: string; id?: string }>();
@@ -29,21 +22,14 @@ export default function PlaylistPage() {
     enabled: !!provider && !!id,
   });
 
-  const providerConfig = playlist ? getProviderConfig(playlist.provider) : { label: '', color: '', bgStyle: '' } as {
-    label: string;
-    color: string;
-    bgStyle: string;
-  };
-  const label = providerConfig.label;
-  const color = providerConfig.color;
-  const bgStyle = providerConfig.bgStyle;
+  const providerConfig = playlist ? getProviderConfig(playlist.provider) : { label: '', color: '', bgStyle: '' } as const;
 
   const totalDuration = playlist ? playlist.tracks.reduce((acc, track) => acc + track.duration, 0) : 0;
 
   const [categorizedData, setCategorizedData] = useState<CategorizedPlaylist | null>(null);
 
   const categorizeMutation = useMutation({
-    mutationFn: (playlistId: string) => mockCategorizePlaylist(playlistId),
+    mutationFn: (playlistId: string) => categorizePlaylist(provider ?? '', playlistId),
     onSuccess: data => {
       setCategorizedData(data);
     },
@@ -63,8 +49,10 @@ export default function PlaylistPage() {
   };
 
   const handleExportConfirm = (customName: string) => {
-    console.log(`EXPORT START: Playlist [${id}] - Category [${exportState.category}] - Name [${customName}]`);
     setExportState({ isOpen: false, category: '' });
+    exportPlaylist(provider ?? '', id ?? '', exportState.category, customName).then(() => {
+      alert('Exportation réussie ! Vérifiez votre compte sur la plateforme.');
+    });
   };
 
   return (

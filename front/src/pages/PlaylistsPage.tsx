@@ -1,24 +1,51 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle, Link2, RefreshCw, FolderSearch } from 'lucide-react';
+import { AlertCircle, Link2, RefreshCw } from 'lucide-react';
 import { ProviderEnum, type ProviderType } from '@/types/playlist.types';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { getProviderConfig } from '@/lib/providers';
-import { MOCK_USER_CONNECTIONS } from '@/data/mock-user';
+import { getProviderConfig, PROVIDERS_CONFIG } from '@/lib/providers';
 import { getPlaylists } from '@/services/playlist.service';
 import { PlaylistCard } from '@/components/Block/playlists/PlaylistCard';
 import { ExportModal } from '@/components/Block/modals/ExportModal';
+import auth from '@/lib/auth';
+import type { PublicUser } from '@/types/user';
+import { handleConnect } from '@/services/provider.service';
 
 export default function PlaylistsPage() {
   const navigate = useNavigate();
   const [activeProvider, setActiveProvider] = useState<ProviderType>(ProviderEnum.SPOTIFY);
 
+  const [user, setUser] = useState<PublicUser | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    auth
+      .getMe()
+      .then((u: PublicUser) => {
+        if (mounted) setUser(u);
+      })
+      .catch(() => {
+        if (mounted) setUser(null);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const alreadyConnected = Object.values(ProviderEnum)
+    .filter(provider => user?.connectedAccounts?.some(acc => acc.provider === provider))
+    .map(provider => ({
+      name: PROVIDERS_CONFIG[provider].label,
+      url: '/provider/' + PROVIDERS_CONFIG[provider].label.toLowerCase(),
+      icon: PROVIDERS_CONFIG[provider].icon,
+    }));
+
   const providerConfig = getProviderConfig(activeProvider);
-  const isConnected = MOCK_USER_CONNECTIONS[activeProvider];
+  const isConnected = alreadyConnected.some(acc => acc.name === providerConfig.label);
 
   const [playlistToExport, setPlaylistToExport] = useState<string | null>(null);
 
@@ -35,18 +62,13 @@ export default function PlaylistsPage() {
     enabled: isConnected,
   });
 
-  const handleConnect = () => {
-    console.log(`Redirection OAuth ${providerConfig.label}...`);
-  };
+  const isTokenExpired = isError && error.response.data.error.includes('SPOTIFY_TOKEN_EXPIRED');
 
   const handleExportClick = (id: string) => {
-    console.log("Ouverture modale pour :", id);
     setPlaylistToExport(id);
   };
 
   const handleExportConfirm = (targetProvider: string) => {
-    console.log(`EXPORTATION DE LA PLAYLIST [${playlistToExport}] VERS [${targetProvider}]`);
-    // TODO: Appeler la mutation API ici (POST /export)
     setPlaylistToExport(null);
   };
 
@@ -88,7 +110,7 @@ export default function PlaylistsPage() {
 
         <div className="min-h-100">
           {/* ETAT 1 : NON CONNECTÉ */}
-          {!isConnected ? (
+          {!isConnected || isTokenExpired ? (
             <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed rounded-xl bg-muted/30 text-center space-y-6">
               <div className="p-6 rounded-full bg-background shadow-sm" style={{ color: providerConfig.color }}>
                 <Link2 size={48} />
@@ -98,7 +120,7 @@ export default function PlaylistsPage() {
                 <p className="text-muted-foreground">Pour importer et gérer vos playlists, vous devez d'abord associer votre compte.</p>
               </div>
               <Button
-                onClick={handleConnect}
+                onClick={() => handleConnect(activeProvider)}
                 size="lg"
                 className="gap-2 text-white font-semibold shadow-md hover:opacity-90 transition-opacity"
                 style={{ background: providerConfig.bgStyle }}
@@ -109,7 +131,7 @@ export default function PlaylistsPage() {
           ) : null}
 
           {/* ETAT 2 : ERREUR API */}
-          {isConnected && isError ? (
+          {isConnected && isError && !isTokenExpired ? (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Erreur de synchronisation</AlertTitle>
@@ -145,10 +167,10 @@ export default function PlaylistsPage() {
                 <PlaylistCard
                   key={playlist.id}
                   playlist={playlist}
-                  coverUrl={ playlist.imageUrl ?? `https://picsum.photos/seed/${playlist.id}/400/400`}
+                  coverUrl={playlist.imageUrl ?? `https://picsum.photos/seed/${playlist.id}/400/400`}
                   onClick={id => navigate(`/playlist/${playlist.provider}/${id}`)}
                   onSort={id => console.log('Sort', id)}
-                  onExport={(id) => handleExportClick(id)}
+                  onExport={id => handleExportClick(id)}
                   onRename={id => console.log('Rename', id)}
                   onDelete={id => console.log('Delete', id)}
                 />

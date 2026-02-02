@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MoreVertical, Music, ArrowRight, Pencil, Trash2 } from 'lucide-react';
 import { type PlaylistSummary } from '@/types/playlist.types';
-import { formatDuration } from '@/lib/utils';
 import { getProviderConfig } from '@/lib/providers';
 
 // --- Component Props ---

@@ -31,6 +31,22 @@ export class PlaylistsController {
   }
 
   /**
+   * GET /playlists/spotify/12345/categorize
+   */
+  @Get(':provider/:id/categorize')
+  async categorize(
+    @Param('provider', new ParseEnumPipe(ProviderEnum)) provider: ProviderEnum,
+    @Param('id') playlistId: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return this.playlistsService.categorizePlaylist(
+      provider,
+      playlistId,
+      req.user.userId,
+    );
+  }
+
+  /**
    * GET /playlists/spotify/12345
    */
   @Get(':provider/:id')
@@ -47,22 +63,6 @@ export class PlaylistsController {
   }
 
   /**
-   * GET /playlists/spotify/12345/categorize
-   */
-  @Get(':provider/:id/categorize')
-  async categorize(
-    @Param('provider', new ParseEnumPipe(ProviderEnum)) provider: ProviderEnum,
-    @Param('id') playlistId: string,
-    @Req() req: AuthenticatedRequest,
-  ) {
-    return this.playlistsService.categorizePlaylist(
-      provider,
-      playlistId,
-      req.user.userId,
-    );
-  }
-
-/**
    * POST /playlists/:provider/export
    * * Exporte une catégorie de musique vers une nouvelle playlist réelle sur la plateforme (Spotify/Deezer).
    * * Deux modes de fonctionnement :

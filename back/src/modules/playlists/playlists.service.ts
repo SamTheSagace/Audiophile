@@ -113,10 +113,6 @@ export class PlaylistsService {
 
     // CAS A : Modif utilisateur
     if (trackIds && trackIds.length > 0) {
-      console.log(
-        `💾 Mise à jour de la BDD avec les ${trackIds.length} titres sélectionnés.`,
-      );
-
       const updatedTracks = result[categoryName].filter((track) =>
         trackIds.includes(track.id),
       );
@@ -129,7 +125,6 @@ export class PlaylistsService {
     }
     // CAS B : Export complet
     else {
-      console.log(`🤖 Export complet depuis la BDD pour '${categoryName}'`);
       finalTrackIds = result[categoryName].map((track) => track.id);
     }
 
