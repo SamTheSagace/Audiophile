@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle, Link2, RefreshCw, FolderSearch } from 'lucide-react';
+import { AlertCircle, Link2, RefreshCw } from 'lucide-react';
 import { ProviderEnum, type ProviderType } from '@/types/playlist.types';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -13,7 +13,6 @@ import { PlaylistCard } from '@/components/Block/playlists/PlaylistCard';
 import { ExportModal } from '@/components/Block/modals/ExportModal';
 import auth from '@/lib/auth';
 import type { PublicUser } from '@/types/user';
-import type { IconType } from 'react-icons';
 import { handleConnect } from '@/services/provider.service';
 
 export default function PlaylistsPage() {
@@ -37,23 +36,13 @@ export default function PlaylistsPage() {
     };
   }, []);
 
-  // --- LOGIQUE DYNAMIQUE DES CONNECTIONS ---
-  const alreadyConnected: { name: string; url: string; icon: IconType }[] = [];
-
-  Object.values(ProviderEnum).forEach(provider => {
-    const config = PROVIDERS_CONFIG[provider];
-    const isConnected = user?.connectedAccounts?.some(acc => acc.provider === provider);
-
-    const item = {
-      name: config.label,
-      url: '/provider/' + config.label.toLowerCase(),
-      icon: config.icon,
-    };
-
-    if (isConnected) {
-      alreadyConnected.push(item);
-    }
-  });
+  const alreadyConnected = Object.values(ProviderEnum)
+    .filter(provider => user?.connectedAccounts?.some(acc => acc.provider === provider))
+    .map(provider => ({
+      name: PROVIDERS_CONFIG[provider].label,
+      url: '/provider/' + PROVIDERS_CONFIG[provider].label.toLowerCase(),
+      icon: PROVIDERS_CONFIG[provider].icon,
+    }));
 
   const providerConfig = getProviderConfig(activeProvider);
   const isConnected = alreadyConnected.some(acc => acc.name === providerConfig.label);
@@ -76,13 +65,10 @@ export default function PlaylistsPage() {
   const isTokenExpired = isError && error.response.data.error.includes('SPOTIFY_TOKEN_EXPIRED');
 
   const handleExportClick = (id: string) => {
-    console.log('Ouverture modale pour :', id);
     setPlaylistToExport(id);
   };
 
   const handleExportConfirm = (targetProvider: string) => {
-    console.log(`EXPORTATION DE LA PLAYLIST [${playlistToExport}] VERS [${targetProvider}]`);
-    // TODO: Appeler la mutation API ici (POST /export)
     setPlaylistToExport(null);
   };
 

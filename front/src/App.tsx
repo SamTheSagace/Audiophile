@@ -43,9 +43,8 @@ export default function App() {
               <Route element={<MainLayout />}>
                 <Route path="/" element={<PlaylistsPage />} />
                 {/* <Route path="/playlists" element={<PlaylistsPage />} /> */}
-                {/* Attention à l'ordre des paramètres dans ton path */}
                 <Route path="/playlist/:provider/:id" element={<PlaylistPage />} />
-                <Route path="/provider/:provider" element={<ProviderPage />} />"
+                <Route path="/provider/:provider" element={<ProviderPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
               </Route>
             </Route>
