@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle, CheckCircle2, Link2 } from 'lucide-react';
 import { getProviderConfig } from '@/lib/providers';
 import { ProviderEnum, type ProviderType } from '@/types/playlist.types';
