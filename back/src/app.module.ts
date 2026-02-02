@@ -9,7 +9,6 @@ import { typeOrmConfigFactory } from './config/typeorm.config';
 
 @Module({
   imports: [
-
     // Variables d'environnement
     ConfigModule.forRoot({
       isGlobal: true,

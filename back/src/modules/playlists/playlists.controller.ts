@@ -31,22 +31,6 @@ export class PlaylistsController {
   }
 
   /**
-   * GET /playlists/spotify/12345
-   */
-  @Get(':provider/:id')
-  async findOne(
-    @Param('provider', new ParseEnumPipe(ProviderEnum)) provider: ProviderEnum,
-    @Param('id') playlistId: string,
-    @Req() req: any,
-  ) {
-    return this.playlistsService.findOneByProvider(
-      provider,
-      playlistId,
-      req.user.userId,
-    );
-  }
-
-  /**
    * GET /playlists/spotify/12345/categorize
    */
   @Get(':provider/:id/categorize')
@@ -56,6 +40,22 @@ export class PlaylistsController {
     @Req() req: AuthenticatedRequest,
   ) {
     return this.playlistsService.categorizePlaylist(
+      provider,
+      playlistId,
+      req.user.userId,
+    );
+  }
+
+  /**
+   * GET /playlists/spotify/12345
+   */
+  @Get(':provider/:id')
+  async findOne(
+    @Param('provider', new ParseEnumPipe(ProviderEnum)) provider: ProviderEnum,
+    @Param('id') playlistId: string,
+    @Req() req: any,
+  ) {
+    return this.playlistsService.findOneByProvider(
       provider,
       playlistId,
       req.user.userId,

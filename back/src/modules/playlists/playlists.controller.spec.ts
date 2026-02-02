@@ -60,7 +60,7 @@ describe('PlaylistsController', () => {
       // ARRANGE
       const provider = ProviderEnum.DEEZER;
       const playlistId = 'pl-456';
-      
+
       // ACT
       await controller.categorize(provider, playlistId, mockUserReq);
 
@@ -88,7 +88,9 @@ describe('PlaylistsController', () => {
       await controller.export(provider, body, mockUserReq);
 
       // ASSERT
-      expect(playlistsServiceMock.exportPlaylistToProvider).toHaveBeenCalledWith(
+      expect(
+        playlistsServiceMock.exportPlaylistToProvider,
+      ).toHaveBeenCalledWith(
         provider,
         mockUserReq.user.userId,
         body.sourcePlaylistId,
@@ -109,7 +111,9 @@ describe('PlaylistsController', () => {
       await controller.export(ProviderEnum.SPOTIFY, body, mockUserReq);
 
       // ASSERT
-      expect(playlistsServiceMock.exportPlaylistToProvider).toHaveBeenCalledWith(
+      expect(
+        playlistsServiceMock.exportPlaylistToProvider,
+      ).toHaveBeenCalledWith(
         ProviderEnum.SPOTIFY,
         mockUserReq.user.userId,
         body.sourcePlaylistId,
